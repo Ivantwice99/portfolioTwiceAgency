@@ -764,7 +764,7 @@ const syncEmbedScale = () => {
     return;
   }
 
-  const width = modalScreen.clientWidth || window.innerWidth;
+  const width = modalScreen.getBoundingClientRect().width || modalScreen.clientWidth || window.innerWidth;
   const scale = Math.min(1, width / 640);
   modalScreen.style.setProperty("--embed-scale", scale.toFixed(4));
 };
@@ -832,6 +832,7 @@ const openVideo = (title, previewUrl, ratio) => {
   videoModal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
   modalPanel.focus();
+  window.requestAnimationFrame(syncEmbedScale);
 };
 
 const closeVideo = () => {

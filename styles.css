@@ -1032,7 +1032,8 @@ h3 {
   inset: 0;
   z-index: 60;
   display: none;
-  place-items: center;
+  align-items: center;
+  justify-items: center;
   padding: 1rem;
 }
 
@@ -1049,6 +1050,7 @@ h3 {
 .modal-panel {
   position: relative;
   width: min(92vw, calc(88vh * 16 / 9), 1280px);
+  margin-inline: auto;
   overflow: hidden;
   border: 1px solid rgba(226, 240, 255, 0.22);
   border-radius: var(--radius);
@@ -1085,6 +1087,7 @@ h3 {
   position: relative;
   aspect-ratio: 16 / 9;
   min-height: 0;
+  overflow: hidden;
   background:
     radial-gradient(circle at 50% 42%, rgba(246, 199, 104, 0.32), transparent 9rem),
     radial-gradient(circle at 30% 70%, rgba(103, 232, 249, 0.2), transparent 10rem),
@@ -1111,6 +1114,7 @@ h3 {
 
 .modal-screen video {
   object-fit: contain;
+  object-position: center center;
 }
 
 .modal-screen.has-native video,
@@ -1355,6 +1359,10 @@ h3 {
 }
 
 @media (max-width: 720px) {
+  .video-modal {
+    padding: 0.5rem;
+  }
+
   .scene-shade::before,
   .stage::before,
   .stage::after,
@@ -1536,18 +1544,20 @@ h3 {
   }
 
   .modal-panel.is-landscape {
-    width: calc(100vw - 0.75rem);
-    max-height: calc(100svh - 0.75rem);
+    width: min(100%, 720px);
+    max-height: calc(100svh - 1rem);
+    margin-inline: auto;
   }
 
   .modal-panel.is-portrait {
-    width: calc(100vw - 0.75rem);
-    max-height: calc(100svh - 0.75rem);
+    width: min(100%, calc((100svh - 1rem) * 9 / 16), 430px);
+    max-height: calc(100svh - 1rem);
+    margin-inline: auto;
   }
 
   .modal-panel.is-landscape .modal-screen {
     aspect-ratio: 1 / 1;
-    max-height: min(78svh, calc(100svh - 0.75rem));
+    max-height: min(78svh, calc(100svh - 1rem));
   }
 
   .modal-panel.is-landscape .modal-screen.has-native {
@@ -1556,24 +1566,28 @@ h3 {
 
   .modal-panel.is-portrait .modal-screen {
     aspect-ratio: 9 / 16;
-    max-height: calc(100svh - 0.75rem);
+    max-height: calc(100svh - 1rem);
   }
 
   .modal-screen.has-embed iframe {
+    --frame-w: 640px;
+    --frame-h: 360px;
     left: 50%;
     top: 50%;
-    width: 640px;
-    height: 360px;
+    right: auto;
+    bottom: auto;
+    width: var(--frame-w);
+    height: var(--frame-h);
     transform: translate(-50%, -50%) scale(var(--embed-scale, 1));
-    transform-origin: center;
+    transform-origin: center center;
   }
 
   .modal-panel.is-landscape .modal-screen.has-embed iframe {
-    height: 640px;
+    --frame-h: 640px;
   }
 
   .modal-panel.is-portrait .modal-screen.has-embed iframe {
-    height: 1138px;
+    --frame-h: 1138px;
   }
 
   .modal-close {
