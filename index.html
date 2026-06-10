@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TwiceAgency | Video Menu</title>
+    <meta name="description" content="Immersive menu for a freelance video editing portfolio.">
+    <link rel="preload" href="assets/audio/final-fantasy-menu-click.mp3" as="audio">
+    <link rel="preload" href="assets/audio/ambient-loop.mp3" as="audio" type="audio/mpeg">
+    <link rel="stylesheet" href="styles.css?v=ambient-drive-local-v5">
+  </head>
+  <body>
+    <div class="scene" aria-hidden="true">
+      <div class="pentagon-field" data-pentagon-field></div>
+      <div class="particle-field" data-particle-field></div>
+      <div class="scene-shade"></div>
+      <div class="stars" data-stars></div>
+    </div>
+
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="TwiceAgency">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 20s-7-4.1-8.6-8.6C2.4 8.4 4.1 5 7.2 5c1.8 0 3.1 1 3.8 2.1C11.8 6 13 5 14.8 5c3.1 0 4.8 3.4 3.8 6.4C17 15.9 12 20 12 20Z"></path>
+            <path d="M12 3.2v3M20.2 12h-3M6.8 12h-3M12 17.8v3"></path>
+          </svg>
+        </span>
+        <span>TwiceAgency</span>
+      </a>
+      <div class="top-status" data-availability-status>
+        <span data-i18n="statusRole">Freelance editor</span>
+        <strong data-availability-label>Available</strong>
+      </div>
+      <div class="top-controls" aria-label="Preferences">
+        <button class="control-switch theme-switch" type="button" data-theme-toggle aria-pressed="false" aria-label="Change theme">
+          <span class="switch-track" aria-hidden="true">
+            <span class="switch-knob"></span>
+          </span>
+          <span class="control-label" data-theme-label>Dark</span>
+        </button>
+        <button class="control-switch language-switch" type="button" data-language-toggle aria-pressed="true" aria-label="Change language">
+          <span data-lang-current>EN</span>
+          <span class="switch-divider" aria-hidden="true"></span>
+          <span class="language-alt">ES</span>
+        </button>
+        <button class="control-switch ambient-switch is-enabled" type="button" data-ambient-toggle aria-pressed="true" aria-label="Ambient audio 5%" title="Ambient audio 5%">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 18V6l10-2v12"></path>
+            <path d="M9 18a3 2 0 1 1-6 0 3 2 0 0 1 6 0Z"></path>
+            <path d="M19 16a3 2 0 1 1-6 0 3 2 0 0 1 6 0Z"></path>
+          </svg>
+          <span class="ambient-pulse" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="game-shell" id="inicio">
+      <section class="menu-console" aria-labelledby="menu-title">
+        <p class="kicker" data-i18n="videoPortfolio">Video portfolio</p>
+        <h1 id="menu-title" data-i18n="menuTitle">Editing menu</h1>
+
+        <nav class="game-menu" aria-label="Main menu">
+          <button class="menu-option is-active" type="button" data-panel-button="videos">
+            <span>01</span>
+            <strong data-i18n="videos">Videos</strong>
+          </button>
+          <button class="menu-option" type="button" data-panel-button="pagos">
+            <span>02</span>
+            <strong data-i18n="payments">Payment methods</strong>
+          </button>
+          <button class="menu-option" type="button" data-panel-button="contacto">
+            <span>03</span>
+            <strong data-i18n="contact">Contact</strong>
+          </button>
+        </nav>
+
+        <div class="console-footer">
+          <span data-i18n="reels">Reels</span>
+          <span data-i18n="ads">Ads</span>
+          <span data-i18n="events">Events</span>
+        </div>
+      </section>
+
+      <section class="stage" aria-live="polite">
+        <div class="panel is-active" data-panel="videos">
+          <div class="panel-head">
+            <p class="kicker" data-i18n="videos">Videos</p>
+            <h2 data-i18n="selectExample">Select an example</h2>
+          </div>
+
+          <div class="video-grid">
+            <button class="video-tile" type="button" data-open-video="example-01" data-video-id="MDV-01" data-video-ratio="9:16" data-video-quality="original" data-video-title="Futuristic tech reel" data-video-preview="https://drive.google.com/file/d/17E77VP6PiXkoingGngcMrNdjlcsT8xyF/preview">
+              <span class="video-thumb thumb-gold" style="--thumb: url('https://drive.google.com/thumbnail?id=17E77VP6PiXkoingGngcMrNdjlcsT8xyF&amp;sz=w1000');" aria-hidden="true">
+                <i></i>
+              </span>
+              <span class="tile-copy">
+                <span class="video-code">ID MDV-01</span>
+                <strong data-i18n="video01Title">Futuristic tech reel</strong>
+                <small data-i18n="video01Desc">Robot, text, and vertical rhythm.</small>
+              </span>
+            </button>
+
+            <button class="video-tile" type="button" data-open-video="example-02" data-video-id="MDV-02" data-video-ratio="16:9" data-video-quality="original" data-video-title="Intro anime gamer" data-video-preview="https://drive.google.com/file/d/1T6NIZPnUTuuN5J4d-B4F8zDAqmQkLMbJ/preview">
+              <span class="video-thumb thumb-cyan" style="--thumb: url('https://drive.google.com/thumbnail?id=1T6NIZPnUTuuN5J4d-B4F8zDAqmQkLMbJ&amp;sz=w1000');" aria-hidden="true">
+                <i></i>
+              </span>
+              <span class="tile-copy">
+                <span class="video-code">ID MDV-02</span>
+                <strong data-i18n="video02Title">Intro anime gamer</strong>
+                <small data-i18n="video02Desc">Fast hook with visual energy.</small>
+              </span>
+            </button>
+
+            <button class="video-tile" type="button" data-open-video="example-03" data-video-id="MDV-03" data-video-ratio="16:9" data-video-quality="original" data-video-title="Urban aerial view" data-video-preview="https://drive.google.com/file/d/1Ajib5mZpaBzbeHMBqdPiEVEvUV5hxQGo/preview">
+              <span class="video-thumb thumb-rose" style="--thumb: url('https://drive.google.com/thumbnail?id=1Ajib5mZpaBzbeHMBqdPiEVEvUV5hxQGo&amp;sz=w1000');" aria-hidden="true">
+                <i></i>
+              </span>
+              <span class="tile-copy">
+                <span class="video-code">ID MDV-03</span>
+                <strong data-i18n="video03Title">Urban aerial view</strong>
+                <small data-i18n="video03Desc">Drone, mood, and cinematic cut.</small>
+              </span>
+            </button>
+
+            <button class="video-tile" type="button" data-open-video="example-04" data-video-id="MDV-04" data-video-ratio="16:9" data-video-quality="original" data-video-title="Urban dance" data-video-preview="https://drive.google.com/file/d/1ScPM1zKp2AYPdtvcvuXmBLkQQpJoXh3I/preview">
+              <span class="video-thumb thumb-silver" style="--thumb: url('https://drive.google.com/thumbnail?id=1ScPM1zKp2AYPdtvcvuXmBLkQQpJoXh3I&amp;sz=w1000');" aria-hidden="true">
+                <i></i>
+              </span>
+              <span class="tile-copy">
+                <span class="video-code">ID MDV-04</span>
+                <strong data-i18n="video04Title">Urban dance</strong>
+                <small data-i18n="video04Desc">Split screen and beat-driven cuts.</small>
+              </span>
+            </button>
+
+            <button class="video-tile" type="button" data-open-video="example-05" data-video-id="MDV-05" data-video-ratio="16:9" data-video-quality="original" data-video-title="Dramatic hook" data-video-preview="https://drive.google.com/file/d/1Cf58UjHlIwLXMpe2d3XH2vTrdsXkk1jr/preview">
+              <span class="video-thumb thumb-gold" style="--thumb: url('assets/thumbs/mdv-05-thumb.jpg');" aria-hidden="true">
+                <i></i>
+              </span>
+              <span class="tile-copy">
+                <span class="video-code">ID MDV-05</span>
+                <strong data-i18n="video05Title">Dramatic hook</strong>
+                <small data-i18n="video05Desc">Large text and visual impact.</small>
+              </span>
+            </button>
+
+            <button class="video-tile" type="button" data-open-video="example-06" data-video-id="MDV-06" data-video-ratio="16:9" data-video-quality="original" data-video-title="Dark montage" data-video-preview="https://drive.google.com/file/d/1HEozkUvYzi2QIENRymAtBmJMluyj7RLY/preview">
+              <span class="video-thumb thumb-cyan" style="--thumb: url('assets/thumbs/mdv-06-thumb.jpg');" aria-hidden="true">
+                <i></i>
+              </span>
+              <span class="tile-copy">
+                <span class="video-code">ID MDV-06</span>
+                <strong data-i18n="video06Title">Dark montage</strong>
+                <small data-i18n="video06Desc">Atmosphere, pause, and tension.</small>
+              </span>
+            </button>
+
+            <button class="video-tile" type="button" data-open-video="example-07" data-video-id="MDV-07" data-video-ratio="16:9" data-video-quality="original" data-video-title="Color and energy" data-video-preview="https://drive.google.com/file/d/11Ddn0PCrw5_E86smzJrZcqvWUxH6koHu/preview">
+              <span class="video-thumb thumb-rose" style="--thumb: url('assets/thumbs/mdv-07-thumb.jpg');" aria-hidden="true">
+                <i></i>
+              </span>
+              <span class="tile-copy">
+                <span class="video-code">ID MDV-07</span>
+                <strong data-i18n="video07Title">Color and energy</strong>
+                <small data-i18n="video07Desc">Flashes, saturation, and rhythm.</small>
+              </span>
+            </button>
+
+            <button class="video-tile" type="button" data-open-video="example-08" data-video-id="MDV-08" data-video-ratio="16:9" data-video-quality="original" data-video-title="Social cut" data-video-preview="https://drive.google.com/file/d/1fD3VrjeMry7Qhdkwrb-qtWQm9aE0cs1h/preview">
+              <span class="video-thumb thumb-silver" style="--thumb: url('https://drive.google.com/thumbnail?id=1fD3VrjeMry7Qhdkwrb-qtWQm9aE0cs1h&amp;sz=w1000');" aria-hidden="true">
+                <i></i>
+              </span>
+              <span class="tile-copy">
+                <span class="video-code">ID MDV-08</span>
+                <strong data-i18n="video08Title">Social cut</strong>
+                <small data-i18n="video08Desc">Key moments for social media.</small>
+              </span>
+            </button>
+
+            <button class="video-tile" type="button" data-open-video="example-09" data-video-id="MDV-09" data-video-ratio="16:9" data-video-quality="original" data-video-title="Cinematic closer" data-video-preview="https://drive.google.com/file/d/1sFyOq4ffeiGpHAtQzRjs2AhCYAHQoruv/preview">
+              <span class="video-thumb thumb-gold" style="--thumb: url('https://drive.google.com/thumbnail?id=1sFyOq4ffeiGpHAtQzRjs2AhCYAHQoruv&amp;sz=w1000');" aria-hidden="true">
+                <i></i>
+              </span>
+              <span class="tile-copy">
+                <span class="video-code">ID MDV-09</span>
+                <strong data-i18n="video09Title">Cinematic closer</strong>
+                <small data-i18n="video09Desc">Landscape, pause, and clean ending.</small>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel" data-panel="pagos">
+          <div class="panel-head">
+            <p class="kicker" data-i18n="paymentsKicker">Payments</p>
+            <h2 data-i18n="payments">Payment methods</h2>
+          </div>
+
+          <div class="payment-grid payment-grid-three">
+            <article class="payment-card payment-paypal">
+              <span class="payment-index">01</span>
+              <span class="payment-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48">
+                  <path d="M17 39 22.2 9h12.6c5 0 8.1 3.2 7.1 8.2-1.1 5.9-5.6 9.3-12.1 9.3h-5.1L22.4 39Z"></path>
+                  <path d="M9 39 14.2 9h14.2c4.8 0 7.6 2.8 6.8 7.3-.9 5.6-5.3 8.9-11.4 8.9h-5.3L16.1 39Z"></path>
+                </svg>
+              </span>
+              <strong data-i18n="payPal">PayPal</strong>
+            </article>
+            <article class="payment-card payment-mercado">
+              <span class="payment-index">02</span>
+              <span class="payment-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48">
+                  <path d="M7 23c4.6-8.8 11-13 17-13s12.4 4.2 17 13c-4.6 8.8-11 13-17 13S11.6 31.8 7 23Z"></path>
+                  <path d="M15 23c3 3.2 5.4 4.8 7.2 4.8 1.7 0 2.7-1.3 4.1-3.1 1.4-1.7 2.7-2.7 4.6-1.1l3.1 2.7"></path>
+                  <path d="M15.5 19.8c3.5-2.4 6.3-2.4 8.5 0l2.2 2.2"></path>
+                </svg>
+              </span>
+              <strong data-i18n="mercadoPago">Mercado Pago</strong>
+            </article>
+            <article class="payment-card payment-binance">
+              <span class="payment-index">03</span>
+              <span class="payment-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48">
+                  <path d="m24 7 7 7-7 7-7-7 7-7Z"></path>
+                  <path d="m12 19 5 5-5 5-5-5 5-5Z"></path>
+                  <path d="m36 19 5 5-5 5-5-5 5-5Z"></path>
+                  <path d="m24 27 7 7-7 7-7-7 7-7Z"></path>
+                  <path d="m24 19 5 5-5 5-5-5 5-5Z"></path>
+                </svg>
+              </span>
+              <strong data-i18n="cryptoBinance">Crypto / Binance</strong>
+            </article>
+          </div>
+
+          <div class="payment-note">
+            <strong data-i18n="deposit">50% upfront</strong>
+            <span data-i18n="finalPayment">50% after final approval</span>
+          </div>
+        </div>
+
+        <div class="panel" data-panel="contacto">
+          <div class="panel-head">
+            <p class="kicker" data-i18n="contact">Contact</p>
+            <h2 data-i18n="contactTitle">Book your edit</h2>
+          </div>
+
+          <div class="contact-actions">
+            <a class="contact-button" href="#contacto" data-contact-action="email" rel="nofollow">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 4h16v16H4z"></path>
+                <path d="m4 7 8 6 8-6"></path>
+              </svg>
+              <span data-contact-label="email" data-i18n="contactEmail">Email</span>
+            </a>
+            <a class="contact-button" href="#contacto" data-contact-action="whatsapp" rel="nofollow">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-5.2A8.5 8.5 0 1 1 21 11.5Z"></path>
+                <path d="M9 8.7c.2 3 2.3 5.2 5.4 6 .6.1 1.2-.2 1.5-.7l.3-.6c.2-.4 0-.9-.3-1.1l-1.1-.7c-.3-.2-.7-.2-1 .1l-.4.4c-1-.5-1.7-1.2-2.2-2.2l.4-.4c.3-.3.3-.7.1-1l-.7-1.1c-.2-.4-.7-.5-1.1-.3l-.6.3c-.5.3-.8.8-.7 1.3Z"></path>
+              </svg>
+              <span data-contact-label="whatsapp" data-i18n="contactWhatsapp">WhatsApp</span>
+            </a>
+          </div>
+
+          <form class="mini-form" data-contact-form>
+            <input name="name" type="text" autocomplete="name" placeholder="Name" data-i18n-placeholder="namePlaceholder" required>
+            <input name="project" type="text" autocomplete="off" placeholder="Project" data-i18n-placeholder="projectPlaceholder">
+            <input class="form-honey" name="_honey" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <textarea name="message" rows="4" placeholder="Message" data-i18n-placeholder="messagePlaceholder" required></textarea>
+            <button class="submit-button" type="submit" data-i18n="send">Send</button>
+            <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <div class="video-modal" data-video-modal aria-hidden="true">
+      <div class="modal-backdrop" data-close-video></div>
+      <section class="modal-panel" role="dialog" aria-modal="true" aria-label="Video preview" tabindex="-1">
+        <button class="modal-close" type="button" data-close-video aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12"></path>
+          </svg>
+        </button>
+        <div class="modal-screen">
+          <iframe data-video-frame title="Video preview" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          <span class="play-ring" aria-hidden="true"></span>
+        </div>
+      </section>
+    </div>
+
+    <div class="ambient-player" aria-hidden="true">
+      <audio data-ambient-audio data-drive-source="https://drive.usercontent.google.com/download?id=18OxepgylkiErsqdLQ4Jk_8C9-Pih31l9&amp;export=download" preload="auto" loop autoplay playsinline>
+        <source src="assets/audio/ambient-loop.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <script src="script.js?v=ambient-drive-local-v5"></script>
+  </body>
+</html>
