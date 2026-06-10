@@ -723,6 +723,26 @@ const getDriveDownloadUrl = (url) => {
 };
 
 let currentVideoFallback = "";
+let shouldRestoreAmbientAfterVideo = false;
+
+const pauseAmbientForVideo = () => {
+  shouldRestoreAmbientAfterVideo = ambientEnabled && Boolean(ambientAudio && !ambientAudio.paused);
+
+  if (ambientAudio && !ambientAudio.paused) {
+    pauseAmbientAudio();
+  }
+};
+
+const restoreAmbientAfterVideo = () => {
+  if (!shouldRestoreAmbientAfterVideo) return;
+
+  shouldRestoreAmbientAfterVideo = false;
+
+  if (ambientEnabled) {
+    ambientRequested = true;
+    requestAmbientAudio();
+  }
+};
 
 const syncEmbedScale = () => {
   if (!modalScreen || !smallScreenQuery.matches || !modalScreen.classList.contains("has-embed")) {
@@ -765,6 +785,8 @@ const openVideo = (title, previewUrl, ratio) => {
   const copy = translations[currentLanguage] || translations.en;
   const sourceUrl = getDriveDownloadUrl(previewUrl);
 
+  pauseAmbientForVideo();
+
   modalPanel.setAttribute("aria-label", `${copy.videoPreviewLabel}: ${title}`);
   modalPanel.classList.remove("is-portrait", "is-landscape");
   modalPanel.classList.add(ratio === "9:16" ? "is-portrait" : "is-landscape");
@@ -805,6 +827,7 @@ const closeVideo = () => {
   document.body.classList.remove("modal-open");
   modalPanel?.classList.remove("is-portrait", "is-landscape");
   resetVideoSurfaces();
+  restoreAmbientAfterVideo();
 };
 
 videoPlayer?.addEventListener("error", () => {
