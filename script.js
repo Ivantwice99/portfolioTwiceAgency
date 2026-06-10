@@ -6,6 +6,7 @@ const particleField = document.querySelector("[data-particle-field]");
 const videoModal = document.querySelector("[data-video-modal]");
 const modalPanel = videoModal?.querySelector(".modal-panel");
 const modalScreen = document.querySelector(".modal-screen");
+const videoPlayer = document.querySelector("[data-video-player]");
 const videoFrame = document.querySelector("[data-video-frame]");
 const openVideoButtons = document.querySelectorAll("[data-open-video]");
 const closeVideoButtons = document.querySelectorAll("[data-close-video]");
@@ -26,6 +27,11 @@ const validPanels = ["videos", "pagos", "contacto"];
 const editorIsAvailable = true;
 const clickSoundUrl = "assets/audio/final-fantasy-menu-click.mp3";
 const ambientVolumePercent = 5;
+const smallScreenQuery = window.matchMedia("(max-width: 720px)");
+const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+const finePointerQuery = window.matchMedia("(pointer: fine)");
+const canUseMotion = !reducedMotionQuery.matches;
+const canUsePointerEffects = canUseMotion && finePointerQuery.matches;
 const translations = {
   es: {
     statusRole: "Editor freelancer",
@@ -374,7 +380,9 @@ setAmbientToggleState();
 scheduleAmbientAutoplay();
 
 if (stars) {
-  const total = window.matchMedia("(max-width: 720px)").matches ? 32 : 56;
+  const total = canUseMotion
+    ? (smallScreenQuery.matches ? 10 : 28)
+    : 0;
 
   for (let index = 0; index < total; index += 1) {
     const star = document.createElement("span");
@@ -412,18 +420,24 @@ const createMotionElement = (className, index, total) => {
 
 const initMotionBackground = () => {
   if (pentagonField) {
-    const totalPentagons = window.matchMedia("(max-width: 720px)").matches ? 13 : 22;
+    const totalPentagons = canUseMotion
+      ? (smallScreenQuery.matches ? 5 : 12)
+      : 0;
     pentagonField.replaceChildren(...Array.from({ length: totalPentagons }, (_, index) => (
       createMotionElement("falling-pentagon", index, totalPentagons)
     )));
   }
 
   if (particleField) {
-    const totalParticles = window.matchMedia("(max-width: 720px)").matches ? 34 : 68;
+    const totalParticles = canUseMotion
+      ? (smallScreenQuery.matches ? 0 : 24)
+      : 0;
     particleField.replaceChildren(...Array.from({ length: totalParticles }, (_, index) => (
       createMotionElement("falling-particle", index, totalParticles)
     )));
   }
+
+  if (!canUsePointerEffects) return;
 
   document.addEventListener("pointerdown", (event) => {
     if (!pentagonField) return;
@@ -433,7 +447,7 @@ const initMotionBackground = () => {
     pentagonField.classList.remove("is-pulsing");
     void pentagonField.offsetWidth;
     pentagonField.classList.add("is-pulsing");
-  });
+  }, { passive: true });
 };
 
 initMotionBackground();
@@ -561,6 +575,8 @@ const playOnKeyboardClick = (event, variant) => {
 };
 
 const burstAt = (event) => {
+  if (!canUsePointerEffects) return;
+
   const spark = document.createElement("span");
   spark.className = "click-spark";
   spark.style.setProperty("--x", `${event.clientX}px`);
@@ -586,9 +602,11 @@ buttons.forEach((button) => {
   });
 });
 
-document.querySelectorAll(".video-tile, .payment-grid article, .contact-button, .control-switch").forEach((element) => {
-  element.addEventListener("pointermove", setLocalPointer);
-});
+if (canUsePointerEffects) {
+  document.querySelectorAll(".video-tile, .payment-grid article, .contact-button, .control-switch").forEach((element) => {
+    element.addEventListener("pointermove", setLocalPointer, { passive: true });
+  });
+}
 
 document.querySelectorAll(".payment-grid article, .contact-button, .control-switch").forEach((element, index) => {
   playOnPointerDown(element, index % 4);
@@ -646,10 +664,24 @@ contactLinks.forEach((link) => {
   });
 });
 
-document.addEventListener("pointermove", (event) => {
-  document.documentElement.style.setProperty("--pointer-x", `${(event.clientX / window.innerWidth) * 100}%`);
-  document.documentElement.style.setProperty("--pointer-y", `${(event.clientY / window.innerHeight) * 100}%`);
-});
+if (canUsePointerEffects) {
+  let pointerFrame = 0;
+  let pointerX = 50;
+  let pointerY = 45;
+
+  document.addEventListener("pointermove", (event) => {
+    pointerX = (event.clientX / window.innerWidth) * 100;
+    pointerY = (event.clientY / window.innerHeight) * 100;
+
+    if (pointerFrame) return;
+
+    pointerFrame = window.requestAnimationFrame(() => {
+      document.documentElement.style.setProperty("--pointer-x", `${pointerX}%`);
+      document.documentElement.style.setProperty("--pointer-y", `${pointerY}%`);
+      pointerFrame = 0;
+    });
+  }, { passive: true });
+}
 
 const initialPanel = location.hash.replace("#", "");
 if (validPanels.includes(initialPanel)) {
@@ -677,18 +709,89 @@ const withAutoplay = (url) => {
   return `${url}${url.includes("?") ? "&" : "?"}autoplay=1`;
 };
 
+const getDriveFileId = (url) => {
+  if (!url) return "";
+  const pathMatch = url.match(/\/d\/([^/]+)/);
+  if (pathMatch) return pathMatch[1];
+  const queryMatch = url.match(/[?&]id=([^&]+)/);
+  return queryMatch ? queryMatch[1] : "";
+};
+
+const getDriveDownloadUrl = (url) => {
+  const id = getDriveFileId(url);
+  return id ? `https://drive.usercontent.google.com/download?id=${id}&export=download` : "";
+};
+
+let currentVideoFallback = "";
+
+const syncEmbedScale = () => {
+  if (!modalScreen || !smallScreenQuery.matches || !modalScreen.classList.contains("has-embed")) {
+    modalScreen?.style.removeProperty("--embed-scale");
+    return;
+  }
+
+  const width = modalScreen.clientWidth || window.innerWidth;
+  const scale = Math.min(1, width / 640);
+  modalScreen.style.setProperty("--embed-scale", scale.toFixed(4));
+};
+
+const resetVideoSurfaces = () => {
+  currentVideoFallback = "";
+  modalScreen?.classList.remove("has-video", "has-native", "has-embed");
+  modalScreen?.style.removeProperty("--embed-scale");
+
+  if (videoPlayer) {
+    videoPlayer.pause();
+    videoPlayer.removeAttribute("src");
+    videoPlayer.load();
+  }
+
+  if (videoFrame) {
+    videoFrame.src = "";
+  }
+};
+
+const showEmbedVideo = (previewUrl) => {
+  if (!videoFrame || !previewUrl) return;
+
+  modalScreen?.classList.remove("has-native");
+  modalScreen?.classList.add("has-video", "has-embed");
+  videoFrame.src = withAutoplay(previewUrl);
+  window.requestAnimationFrame(syncEmbedScale);
+};
+
 const openVideo = (title, previewUrl, ratio) => {
   if (!videoModal || !modalPanel) return;
   const copy = translations[currentLanguage] || translations.en;
+  const sourceUrl = getDriveDownloadUrl(previewUrl);
+
   modalPanel.setAttribute("aria-label", `${copy.videoPreviewLabel}: ${title}`);
   modalPanel.classList.remove("is-portrait", "is-landscape");
   modalPanel.classList.add(ratio === "9:16" ? "is-portrait" : "is-landscape");
-  if (videoFrame && previewUrl) {
+
+  resetVideoSurfaces();
+
+  if (videoFrame) {
     videoFrame.title = copy.videoPreviewLabel;
     videoFrame.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
-    videoFrame.src = withAutoplay(previewUrl);
-    modalScreen?.classList.add("has-video");
   }
+
+  if (videoPlayer && sourceUrl) {
+    currentVideoFallback = previewUrl;
+    videoPlayer.title = copy.videoPreviewLabel;
+    videoPlayer.src = sourceUrl;
+    modalScreen?.classList.add("has-video", "has-native");
+    const playback = videoPlayer.play();
+
+    if (playback?.catch) {
+      playback.catch(() => {
+        // The visible native controls still let the user start playback after autoplay is blocked.
+      });
+    }
+  } else if (previewUrl) {
+    showEmbedVideo(previewUrl);
+  }
+
   videoModal.classList.add("is-open");
   videoModal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
@@ -700,13 +803,24 @@ const closeVideo = () => {
   videoModal.classList.remove("is-open");
   videoModal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
-  modalScreen?.classList.remove("has-video");
   modalPanel?.classList.remove("is-portrait", "is-landscape");
-
-  if (videoFrame) {
-    videoFrame.src = "";
-  }
+  resetVideoSurfaces();
 };
+
+videoPlayer?.addEventListener("error", () => {
+  const fallback = currentVideoFallback;
+  if (!fallback || !videoModal?.classList.contains("is-open")) return;
+
+  currentVideoFallback = "";
+
+  if (videoPlayer) {
+    videoPlayer.pause();
+    videoPlayer.removeAttribute("src");
+    videoPlayer.load();
+  }
+
+  showEmbedVideo(fallback);
+});
 
 openVideoButtons.forEach((button) => {
   playOnPointerDown(button, 3);
@@ -737,6 +851,8 @@ window.addEventListener("keydown", (event) => {
     closeVideo();
   }
 });
+
+window.addEventListener("resize", syncEmbedScale, { passive: true });
 
 contactForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
