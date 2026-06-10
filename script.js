@@ -174,7 +174,7 @@ const contactVault = {
 const menuClickSounds = Array.from({ length: 4 }, () => {
   const audio = new Audio(clickSoundUrl);
   audio.preload = "auto";
-  audio.volume = 0.48;
+  audio.volume = finePointerQuery.matches ? 0.42 : 0.24;
   audio.load();
   return audio;
 });
@@ -182,6 +182,7 @@ let audioContext;
 let clickSoundBuffer;
 let clickSoundPromise;
 let clickSoundIndex = 0;
+let lastClickSoundAt = 0;
 let ambientRequested = true;
 let ambientPlaying = false;
 let ambientEnabled = true;
@@ -513,7 +514,7 @@ const playSynthClick = (variant = 0) => {
   filter.frequency.setValueAtTime(1600, now);
   filter.frequency.exponentialRampToValueAtTime(420, now + 0.12);
   gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.08, now + 0.012);
+  gain.gain.exponentialRampToValueAtTime(finePointerQuery.matches ? 0.08 : 0.045, now + 0.012);
   gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
 
   oscillator.connect(filter);
@@ -524,6 +525,12 @@ const playSynthClick = (variant = 0) => {
 };
 
 const playClick = (variant = 0) => {
+  const nowMs = window.performance?.now?.() || Date.now();
+  const cooldown = finePointerQuery.matches ? 70 : 180;
+
+  if (nowMs - lastClickSoundAt < cooldown) return;
+  lastClickSoundAt = nowMs;
+
   const context = getAudioContext();
 
   if (context?.state === "suspended") {
@@ -534,7 +541,7 @@ const playClick = (variant = 0) => {
     const source = context.createBufferSource();
     const gain = context.createGain();
     source.buffer = clickSoundBuffer;
-    gain.gain.setValueAtTime(0.5, context.currentTime);
+    gain.gain.setValueAtTime(finePointerQuery.matches ? 0.42 : 0.24, context.currentTime);
     source.connect(gain);
     gain.connect(context.destination);
     source.start(context.currentTime);
@@ -547,6 +554,13 @@ const playClick = (variant = 0) => {
   clickSoundIndex += 1;
 
   try {
+    if (!finePointerQuery.matches) {
+      menuClickSounds.forEach((audio) => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+    }
+    click.volume = finePointerQuery.matches ? 0.42 : 0.24;
     click.currentTime = 0;
   } catch {
     // Some browsers lock currentTime until the file is ready; the pool still avoids clone latency.

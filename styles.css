@@ -1499,6 +1499,11 @@ h3 {
   }
 
   .modal-panel.is-landscape .modal-screen {
+    aspect-ratio: 1 / 1;
+    max-height: min(78svh, calc(100svh - 0.75rem));
+  }
+
+  .modal-panel.is-landscape .modal-screen.has-native {
     aspect-ratio: 16 / 9;
   }
 
@@ -1514,6 +1519,10 @@ h3 {
     height: 360px;
     transform: translate(-50%, -50%) scale(var(--embed-scale, 1));
     transform-origin: center;
+  }
+
+  .modal-panel.is-landscape .modal-screen.has-embed iframe {
+    height: 640px;
   }
 
   .modal-panel.is-portrait .modal-screen.has-embed iframe {
