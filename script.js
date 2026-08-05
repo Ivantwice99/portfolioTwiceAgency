@@ -189,6 +189,7 @@ const translations = {
     contactTitle: "Reserva tu edición",
     namePlaceholder: "Nombre",
     projectPlaceholder: "Proyecto",
+    replyPlaceholder: "Email / WhatsApp",
     projectReel: "Reel",
     projectAds: "Ads",
     projectEvent: "Evento",
@@ -202,12 +203,15 @@ const translations = {
     send: "Enviar",
     formIncomplete: "Completa nombre y mensaje.",
     formSending: "Enviando mensaje...",
-    formSent: "Mensaje enviado. Si es el primer envio, confirma el correo de FormSubmit.",
-    formFailed: "No se pudo enviar. Intenta con Correo o WhatsApp.",
+    formSent: "Mensaje enviado.",
+    formNeedsActivation: "Revisa contactotwice99@gmail.com y activa FormSubmit para recibir mensajes.",
+    formFallbackMailto: "Abrimos tu correo con el mensaje listo para enviar.",
+    formFailed: "No se pudo enviar automaticamente. Usa Correo o WhatsApp.",
     projectFallback: "Sin especificar",
     mailSubject: "Proyecto de video",
     mailName: "Nombre",
-    mailProject: "Proyecto"
+    mailProject: "Proyecto",
+    mailReply: "Contacto"
   },
   en: {
     statusRole: "Freelance editor",
@@ -309,6 +313,7 @@ const translations = {
     contactTitle: "Book your edit",
     namePlaceholder: "Name",
     projectPlaceholder: "Project",
+    replyPlaceholder: "Email / WhatsApp",
     projectReel: "Reel",
     projectAds: "Ads",
     projectEvent: "Event",
@@ -322,12 +327,15 @@ const translations = {
     send: "Send",
     formIncomplete: "Complete name and message.",
     formSending: "Sending message...",
-    formSent: "Message sent. If this is the first send, confirm the FormSubmit email.",
-    formFailed: "Could not send. Try Email or WhatsApp.",
+    formSent: "Message sent.",
+    formNeedsActivation: "Check contactotwice99@gmail.com and activate FormSubmit to receive messages.",
+    formFallbackMailto: "Opening your email with the message ready to send.",
+    formFailed: "Could not send automatically. Use Email or WhatsApp.",
     projectFallback: "Not specified",
     mailSubject: "Video project",
     mailName: "Name",
-    mailProject: "Project"
+    mailProject: "Project",
+    mailReply: "Reply"
   }
 };
 const contactVault = {
@@ -1079,6 +1087,20 @@ const getContactTarget = () => ({
   phone: contactVault.phone.join("")
 });
 
+const buildMailtoUrl = ({ name, project, reply, message }, copy) => {
+  const contact = getContactTarget();
+  const subject = `${copy.mailSubject}: ${project || copy.projectFallback}`;
+  const body = [
+    `${copy.mailName}: ${name}`,
+    `${copy.mailProject}: ${project || copy.projectFallback}`,
+    `${copy.mailReply}: ${reply || copy.projectFallback}`,
+    "",
+    message
+  ].join("\n");
+
+  return `mailto:${contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+};
+
 const setFormStatus = (message = "", tone = "neutral") => {
   if (!formStatus) return;
   formStatus.textContent = message;
@@ -1086,9 +1108,8 @@ const setFormStatus = (message = "", tone = "neutral") => {
   formStatus.classList.toggle("is-error", tone === "error");
 };
 
-const sendContactRequest = async ({ name, project, message }, copy) => {
-  const contact = getContactTarget();
-  const response = await fetch(`https://formsubmit.co/ajax/${contact.email}`, {
+const sendContactRequest = async ({ name, project, reply, message }, copy) => {
+  const response = await fetch("/api/contact", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -1097,15 +1118,14 @@ const sendContactRequest = async ({ name, project, message }, copy) => {
     body: JSON.stringify({
       name,
       project,
+      reply,
       message,
-      _subject: `${copy.mailSubject}: ${project}`,
-      _template: "table",
-      _captcha: "false"
+      subject: `${copy.mailSubject}: ${project}`
     })
   });
   const result = await response.json().catch(() => ({}));
 
-  if (!response.ok || result.success === false || result.success === "false") {
+  if (!response.ok || result.ok === false) {
     throw new Error(result.message || "contact-send-failed");
   }
 
@@ -1838,6 +1858,7 @@ contactForm?.addEventListener("submit", async (event) => {
   const data = new FormData(contactForm);
   const name = data.get("name")?.toString().trim();
   const project = data.get("project")?.toString().trim() || copy.projectFallback;
+  const reply = data.get("reply")?.toString().trim();
   const message = data.get("message")?.toString().trim();
   const honey = data.get("_honey")?.toString().trim();
 
@@ -1856,11 +1877,12 @@ contactForm?.addEventListener("submit", async (event) => {
   if (contactSubmit) contactSubmit.disabled = true;
 
   try {
-    await sendContactRequest({ name, project, message }, copy);
+    const result = await sendContactRequest({ name, project, reply, message }, copy);
     contactForm.reset();
-    setFormStatus(copy.formSent, "success");
+    setFormStatus(result.activationRequired ? copy.formNeedsActivation : copy.formSent, "success");
   } catch (error) {
-    setFormStatus(copy.formFailed, "error");
+    window.location.href = buildMailtoUrl({ name, project, reply, message }, copy);
+    setFormStatus(copy.formFallbackMailto || copy.formFailed, "error");
   } finally {
     if (contactSubmit) contactSubmit.disabled = false;
   }
