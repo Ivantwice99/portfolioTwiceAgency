@@ -1,5 +1,6 @@
 {
-  "updatedAt": "2026-08-05T00:00:00.000Z",
+  "updatedAt": "2026-08-05T09:28:17.545Z",
+  "updatedBy": "vaguacateman@gmail.com",
   "videos": [
     {
       "uid": "example-01",
@@ -10,8 +11,8 @@
       "previewUrl": "https://drive.google.com/file/d/17E77VP6PiXkoingGngcMrNdjlcsT8xyF/preview",
       "thumbnailUrl": "https://drive.google.com/thumbnail?id=17E77VP6PiXkoingGngcMrNdjlcsT8xyF&sz=w640",
       "title": {
-        "en": "Futuristic tech reel",
-        "es": "Tech reel futurista"
+        "en": "Tech crypto reel",
+        "es": "Reel Tecnologia Crypto"
       },
       "description": {
         "en": "Robot, text, and vertical rhythm.",
