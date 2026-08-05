@@ -1072,8 +1072,7 @@ h3 {
 }
 
 .client-impact {
-  display: grid;
-  gap: 0.42rem;
+  display: none;
 }
 
 .client-impact span {

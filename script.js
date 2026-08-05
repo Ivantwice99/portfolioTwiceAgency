@@ -398,12 +398,6 @@ function getClientData(channel) {
   return clientStatsByHandle.get(channel.handle.toLowerCase()) || normalizeClientPayload({}, channel);
 }
 
-function getClientImpactWidth(data) {
-  if (!data.hasStats || !data.recentViews || !data.recentLikes) return 10;
-  const ratio = data.recentLikes / data.recentViews;
-  return Math.max(10, Math.min(100, ratio * 1800));
-}
-
 function updateClientSummary() {
   const rows = clientChannels.map(getClientData);
   const hasAnyStats = rows.some((row) => row.hasStats);
@@ -421,10 +415,6 @@ function renderClientCards() {
 
   clientGrid.innerHTML = clientChannels.map((channel) => {
     const data = getClientData(channel);
-    const impactWidth = getClientImpactWidth(data);
-    const impactRate = data.recentViews > 0 && data.recentLikes > 0
-      ? `${((data.recentLikes / data.recentViews) * 100).toFixed(1)}%`
-      : copy.clientPendingShort;
     const avatar = data.thumbnail
       ? `<img src="${escapeHtml(data.thumbnail)}" alt="">`
       : `<span>${escapeHtml((data.title || channel.title).slice(0, 2).toUpperCase())}</span>`;
@@ -458,10 +448,6 @@ function renderClientCards() {
             <strong>${formatMetric(data.videoCount)}</strong>
             <small>${copy.clientVideos}</small>
           </span>
-        </div>
-        <div class="client-impact">
-          <span><b>${copy.clientImpact}</b><em>${escapeHtml(impactRate)}</em></span>
-          <i style="--impact-width: ${impactWidth.toFixed(1)}%;"></i>
         </div>
         <p>${escapeHtml(latest)}</p>
       </article>
