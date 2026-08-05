@@ -204,7 +204,7 @@ const translations = {
     formIncomplete: "Completa nombre y mensaje.",
     formSending: "Enviando mensaje...",
     formSent: "Mensaje enviado.",
-    formNeedsActivation: "Revisa contactotwice99@gmail.com y activa FormSubmit para recibir mensajes.",
+    formNeedsActivation: "Revisa vaguacateman@gmail.com y activa FormSubmit para recibir mensajes.",
     formFallbackMailto: "Abrimos tu correo con el mensaje listo para enviar.",
     formFailed: "No se pudo enviar automaticamente. Usa Correo o WhatsApp.",
     projectFallback: "Sin especificar",
@@ -328,7 +328,7 @@ const translations = {
     formIncomplete: "Complete name and message.",
     formSending: "Sending message...",
     formSent: "Message sent.",
-    formNeedsActivation: "Check contactotwice99@gmail.com and activate FormSubmit to receive messages.",
+    formNeedsActivation: "Check vaguacateman@gmail.com and activate FormSubmit to receive messages.",
     formFallbackMailto: "Opening your email with the message ready to send.",
     formFailed: "Could not send automatically. Use Email or WhatsApp.",
     projectFallback: "Not specified",
@@ -339,7 +339,7 @@ const translations = {
   }
 };
 const contactVault = {
-  emailUser: ["contacto", "twice99"],
+  emailUser: ["vaguacateman"],
   emailDomain: ["gmail", "com"],
   phone: ["52", "55", "1706", "5611"]
 };

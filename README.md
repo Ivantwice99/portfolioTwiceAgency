@@ -28,7 +28,7 @@ http://localhost:4173
 The contact panel submits through FormSubmit to:
 
 ```text
-contactotwice99@gmail.com
+vaguacateman@gmail.com
 ```
 
 On the first real submission, FormSubmit sends an activation email to that inbox. Confirm it once. When the automatic send fails, the site opens the visitor's email app with the message already prepared.
