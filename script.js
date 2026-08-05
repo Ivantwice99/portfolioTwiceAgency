@@ -189,7 +189,7 @@ const translations = {
     contactTitle: "Reserva tu edición",
     namePlaceholder: "Nombre",
     projectPlaceholder: "Proyecto",
-    replyPlaceholder: "Email / WhatsApp",
+    replyPlaceholder: "Tu email",
     projectReel: "Reel",
     projectAds: "Ads",
     projectEvent: "Evento",
@@ -201,7 +201,8 @@ const translations = {
     contactWhatsappAria: "Abrir WhatsApp",
     whatsAppMessage: "Hola TwiceAgency, quiero cotizar una edicion de video.",
     send: "Enviar",
-    formIncomplete: "Completa nombre y mensaje.",
+    formIncomplete: "Completa nombre, email y mensaje.",
+    formInvalidEmail: "Escribe un email valido.",
     formSending: "Enviando mensaje...",
     formSent: "Mensaje enviado.",
     formNeedsActivation: "Revisa vaguacateman@gmail.com y activa FormSubmit para recibir mensajes.",
@@ -313,7 +314,7 @@ const translations = {
     contactTitle: "Book your edit",
     namePlaceholder: "Name",
     projectPlaceholder: "Project",
-    replyPlaceholder: "Email / WhatsApp",
+    replyPlaceholder: "Your email",
     projectReel: "Reel",
     projectAds: "Ads",
     projectEvent: "Event",
@@ -325,7 +326,8 @@ const translations = {
     contactWhatsappAria: "Open WhatsApp",
     whatsAppMessage: "Hi TwiceAgency, I want to quote a video edit.",
     send: "Send",
-    formIncomplete: "Complete name and message.",
+    formIncomplete: "Complete name, email, and message.",
+    formInvalidEmail: "Enter a valid email.",
     formSending: "Sending message...",
     formSent: "Message sent.",
     formNeedsActivation: "Check vaguacateman@gmail.com and activate FormSubmit to receive messages.",
@@ -1108,6 +1110,8 @@ const setFormStatus = (message = "", tone = "neutral") => {
   formStatus.classList.toggle("is-error", tone === "error");
 };
 
+const isValidEmail = (value = "") => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
 const sendContactRequest = async ({ name, project, reply, message }, copy) => {
   const contact = getContactTarget();
   const payload = new URLSearchParams({
@@ -1880,8 +1884,13 @@ contactForm?.addEventListener("submit", async (event) => {
     return;
   }
 
-  if (!name || !message) {
+  if (!name || !reply || !message) {
     setFormStatus(copy.formIncomplete, "error");
+    return;
+  }
+
+  if (!isValidEmail(reply)) {
+    setFormStatus(copy.formInvalidEmail, "error");
     return;
   }
 
