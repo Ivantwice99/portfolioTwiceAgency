@@ -1109,27 +1109,39 @@ const setFormStatus = (message = "", tone = "neutral") => {
 };
 
 const sendContactRequest = async ({ name, project, reply, message }, copy) => {
-  const response = await fetch("/api/contact", {
+  const contact = getContactTarget();
+  const payload = new URLSearchParams({
+    name,
+    project,
+    reply: reply || copy.projectFallback,
+    email: reply || "",
+    message,
+    _replyto: reply || "",
+    _subject: `${copy.mailSubject}: ${project}`,
+    _template: "table",
+    _captcha: "false"
+  });
+
+  const response = await fetch(`https://formsubmit.co/ajax/${contact.email}`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       Accept: "application/json"
     },
-    body: JSON.stringify({
-      name,
-      project,
-      reply,
-      message,
-      subject: `${copy.mailSubject}: ${project}`
-    })
+    body: payload
   });
   const result = await response.json().catch(() => ({}));
+  const resultMessage = String(result.message || "");
+  const activationRequired = /activate|activation|confirm|verify|verification/i.test(resultMessage);
 
-  if (!response.ok || result.ok === false) {
+  if (!response.ok || result.success === false || result.success === "false") {
+    if (activationRequired) {
+      return { ok: true, activationRequired };
+    }
+
     throw new Error(result.message || "contact-send-failed");
   }
 
-  return result;
+  return { ok: true, activationRequired: false };
 };
 
 const setAmbientToggleState = () => {

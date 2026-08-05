@@ -25,13 +25,13 @@ http://localhost:4173
 
 ## Contact Form
 
-The contact panel posts to `/api/contact`, which forwards messages to:
+The contact panel submits through FormSubmit to:
 
 ```text
 contactotwice99@gmail.com
 ```
 
-If FormSubmit asks for first-time activation, confirm the email it sends to that inbox. When the automatic send fails, the site opens the visitor's email app with the message already prepared.
+On the first real submission, FormSubmit sends an activation email to that inbox. Confirm it once. When the automatic send fails, the site opens the visitor's email app with the message already prepared.
 
 ## Client Stats
 
