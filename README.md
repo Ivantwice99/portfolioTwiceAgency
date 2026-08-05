@@ -23,12 +23,20 @@ http://localhost:4173
 - `script.js`: menu interactions, video modal, contact form, theme/language/audio controls
 - `assets/`: images, thumbnails, and audio files
 
-## YouTube Client Stats
+## Client Stats
 
 The Clients panel reads `assets/data/youtube-clients.json`.
 
-To fill it with real stats, add a GitHub secret named `YOUTUBE_API_KEY` and run the `Update YouTube client stats` workflow, or run locally:
+The update script tries providers in this order:
+
+1. SocialBlade Business API with `SOCIALBLADE_CLIENT_ID` and `SOCIALBLADE_TOKEN`.
+2. YouTube Data API with `YOUTUBE_API_KEY`.
+3. Public YouTube snapshot fallback, so the portfolio still shows visible stats without client-side keys.
+
+Run locally:
 
 ```bash
-YOUTUBE_API_KEY="your-key" node scripts/update-youtube-stats.mjs
+node scripts/update-youtube-stats.mjs
 ```
+
+For automated premium stats, add the SocialBlade or YouTube keys as GitHub repository secrets and run the `Update YouTube client stats` workflow.

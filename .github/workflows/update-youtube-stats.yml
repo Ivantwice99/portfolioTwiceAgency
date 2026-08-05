@@ -16,14 +16,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: |
-          if [ -z "$YOUTUBE_API_KEY" ]; then
-            echo "YOUTUBE_API_KEY is not configured; skipping update."
-            exit 0
-          fi
-          node scripts/update-youtube-stats.mjs
+      - run: node scripts/update-youtube-stats.mjs
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          SOCIALBLADE_CLIENT_ID: ${{ secrets.SOCIALBLADE_CLIENT_ID }}
+          SOCIALBLADE_TOKEN: ${{ secrets.SOCIALBLADE_TOKEN }}
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
