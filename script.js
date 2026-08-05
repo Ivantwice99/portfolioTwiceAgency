@@ -14,6 +14,13 @@ const contactForm = document.querySelector("[data-contact-form]");
 const contactLinks = document.querySelectorAll("[data-contact-action]");
 const formStatus = document.querySelector("[data-form-status]");
 const contactSubmit = contactForm?.querySelector("button[type=\"submit\"]");
+const clientGrid = document.querySelector("[data-client-grid]");
+const clientStatus = document.querySelector("[data-client-status]");
+const clientRefresh = document.querySelector("[data-client-refresh]");
+const clientApiState = document.querySelector("[data-client-api-state]");
+const clientSummaryViews = document.querySelector("[data-client-summary=\"views\"]");
+const clientSummaryLikes = document.querySelector("[data-client-summary=\"likes\"]");
+const clientSummaryChannels = document.querySelector("[data-client-summary=\"channels\"]");
 const availabilityStatus = document.querySelector("[data-availability-status]");
 const availabilityLabel = document.querySelector("[data-availability-label]");
 const themeToggle = document.querySelector("[data-theme-toggle]");
@@ -23,10 +30,41 @@ const ambientAudio = document.querySelector("[data-ambient-audio]");
 const themeLabel = document.querySelector("[data-theme-label]");
 const languageCurrent = document.querySelector("[data-lang-current]");
 const languageAlt = document.querySelector(".language-alt");
-const validPanels = ["videos", "pagos", "contacto"];
+const validPanels = ["videos", "clientes", "pagos", "contacto"];
 const editorIsAvailable = true;
 const clickSoundUrl = "assets/audio/final-fantasy-menu-click.mp3";
 const ambientVolumePercent = 5;
+const clientStatsDataUrl = "assets/data/youtube-clients.json";
+const clientChannels = [
+  {
+    handle: "RealidadPolicial",
+    title: "Realidad Policial",
+    url: "https://www.youtube.com/@RealidadPolicial",
+    niche: "Documental / casos",
+    tone: "gold"
+  },
+  {
+    handle: "ConocimientoEsoterico",
+    title: "Conocimiento Esoterico",
+    url: "https://www.youtube.com/@ConocimientoEsoterico",
+    niche: "Misterio / narrativas",
+    tone: "cyan"
+  },
+  {
+    handle: "DoubleTwiceOficial",
+    title: "Double Twice Oficial",
+    url: "https://www.youtube.com/@DoubleTwiceOficial",
+    niche: "Marca / entretenimiento",
+    tone: "rose"
+  },
+  {
+    handle: "impactogeopolitik",
+    title: "Impacto Geopolitik",
+    url: "https://www.youtube.com/@impactogeopolitik",
+    niche: "Geopolitica / actualidad",
+    tone: "silver"
+  }
+];
 const smallScreenQuery = window.matchMedia("(max-width: 720px)");
 const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 const finePointerQuery = window.matchMedia("(pointer: fine)");
@@ -46,6 +84,7 @@ const translations = {
     videoPreviewLabel: "Preview de video",
     menuTitle: "Menú de edición",
     videos: "Videos",
+    clients: "Clientes",
     payments: "Formas de pago",
     contact: "Contacto",
     reels: "Reels",
@@ -70,6 +109,27 @@ const translations = {
     video08Desc: "Momentos clave para redes.",
     video09Title: "Cierre cinemático",
     video09Desc: "Paisaje, pausa y final limpio.",
+    clientsKicker: "Clientes",
+    clientsTitle: "Impacto de canales",
+    clientsIntro: "Metricas publicas de YouTube: views, likes recientes, suscriptores y uploads.",
+    refreshStats: "Sincronizar",
+    clientApiReady: "API lista",
+    totalClients: "Clientes",
+    totalViews: "Views totales",
+    totalLikes: "Likes recientes",
+    clientViews: "Views",
+    clientSubscribers: "Subs",
+    clientLikes: "Likes",
+    clientVideos: "Videos",
+    clientImpact: "Impacto",
+    clientVisit: "Abrir canal",
+    clientLatest: "Ultimo video",
+    clientPendingShort: "Sync",
+    clientReadyPrompt: "Stats listas para conectar con YouTube API.",
+    clientLoading: "Sincronizando canales...",
+    clientLoaded: "Datos actualizados desde YouTube.",
+    clientFallback: "Conecta YOUTUBE_API_KEY para mostrar stats reales sin exponer la key.",
+    clientError: "No se pudo sincronizar YouTube ahora.",
     paymentsKicker: "Pagos",
     payPal: "PayPal",
     mercadoPago: "Mercado Pago",
@@ -112,6 +172,7 @@ const translations = {
     videoPreviewLabel: "Video preview",
     menuTitle: "Editing menu",
     videos: "Videos",
+    clients: "Clients",
     payments: "Payment methods",
     contact: "Contact",
     reels: "Reels",
@@ -136,6 +197,27 @@ const translations = {
     video08Desc: "Key moments for social media.",
     video09Title: "Cinematic closer",
     video09Desc: "Landscape, pause, and clean ending.",
+    clientsKicker: "Client impact",
+    clientsTitle: "Channel results",
+    clientsIntro: "Public YouTube metrics: views, recent likes, subscribers, and uploads.",
+    refreshStats: "Sync stats",
+    clientApiReady: "API ready",
+    totalClients: "Clients",
+    totalViews: "Total views",
+    totalLikes: "Recent likes",
+    clientViews: "Views",
+    clientSubscribers: "Subs",
+    clientLikes: "Likes",
+    clientVideos: "Videos",
+    clientImpact: "Impact",
+    clientVisit: "Open channel",
+    clientLatest: "Latest video",
+    clientPendingShort: "Sync",
+    clientReadyPrompt: "Stats ready to connect with YouTube API.",
+    clientLoading: "Syncing channels...",
+    clientLoaded: "Data updated from YouTube.",
+    clientFallback: "Connect YOUTUBE_API_KEY to show real stats without exposing the key.",
+    clientError: "Could not sync YouTube right now.",
     paymentsKicker: "Payments",
     payPal: "PayPal",
     mercadoPago: "Mercado Pago",
@@ -190,6 +272,11 @@ const defaultLanguage = "en";
 const defaultTheme = "dark";
 let currentLanguage = localStorage.getItem("twiceLanguage") || defaultLanguage;
 let currentTheme = localStorage.getItem("twiceTheme") || defaultTheme;
+let clientStatsByHandle = new Map();
+let clientStatsRequested = false;
+let clientStatusKey = "clientReadyPrompt";
+let clientStatusTone = "neutral";
+let clientStatsUpdatedAt = "";
 
 const setAvailability = (isAvailable) => {
   if (!availabilityStatus || !availabilityLabel) return;
@@ -211,6 +298,293 @@ const setTheme = (theme) => {
     themeLabel.textContent = currentTheme === "light" ? copy.themeLight : copy.themeDark;
   }
 };
+
+function escapeHtml(value = "") {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  }[character]));
+}
+
+function toNumber(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+}
+
+function formatMetric(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number <= 0) return "--";
+
+  return new Intl.NumberFormat(currentLanguage === "es" ? "es-MX" : "en-US", {
+    notation: "compact",
+    maximumFractionDigits: number >= 1000000 ? 1 : 0
+  }).format(number);
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return new Intl.DateTimeFormat(currentLanguage === "es" ? "es-MX" : "en-US", {
+    month: "short",
+    day: "numeric"
+  }).format(date);
+}
+
+function getCopy() {
+  return translations[currentLanguage] || translations.en;
+}
+
+function setClientStatus(key = clientStatusKey, tone = clientStatusTone) {
+  clientStatusKey = key;
+  clientStatusTone = tone;
+  const copy = getCopy();
+  const message = copy[key] || "";
+
+  if (clientStatus) {
+    const stamp = key === "clientLoaded" ? formatDate(clientStatsUpdatedAt) : "";
+    clientStatus.textContent = stamp ? `${message} ${stamp}` : message;
+    clientStatus.classList.toggle("is-success", tone === "success");
+    clientStatus.classList.toggle("is-error", tone === "error");
+  }
+
+  if (clientApiState) {
+    clientApiState.textContent = tone === "success" ? copy.clientApiReady : copy.clientPendingShort;
+    clientApiState.classList.toggle("is-live", tone === "success");
+    clientApiState.classList.toggle("is-pending", tone !== "success");
+  }
+}
+
+function normalizeClientPayload(raw = {}, fallback = {}) {
+  const stats = raw.statistics || raw.stats || {};
+  const videos = Array.isArray(raw.videos)
+    ? raw.videos
+    : (Array.isArray(raw.latestVideos) ? raw.latestVideos : []);
+  const recent = raw.recent || {};
+  const channelViews = toNumber(stats.viewCount || raw.viewCount || raw.channelViews);
+  const subscriberCount = toNumber(stats.subscriberCount || raw.subscriberCount);
+  const videoCount = toNumber(stats.videoCount || raw.videoCount);
+  const recentViews = toNumber(recent.views || raw.recentViews) || videos.reduce((total, video) => (
+    total + toNumber(video.statistics?.viewCount || video.viewCount)
+  ), 0);
+  const recentLikes = toNumber(recent.likes || raw.recentLikes) || videos.reduce((total, video) => (
+    total + toNumber(video.statistics?.likeCount || video.likeCount)
+  ), 0);
+  const latestVideo = videos[0] || raw.latestVideo || {};
+  const hasStats = Boolean(channelViews || subscriberCount || videoCount || recentViews || recentLikes);
+
+  return {
+    handle: raw.handle || fallback.handle,
+    title: raw.title || raw.name || raw.snippet?.title || fallback.title,
+    url: raw.url || fallback.url,
+    niche: raw.niche || fallback.niche,
+    tone: fallback.tone,
+    thumbnail: raw.thumbnail || raw.avatar || raw.snippet?.thumbnails?.high?.url || raw.snippet?.thumbnails?.default?.url || "",
+    channelViews,
+    subscriberCount,
+    videoCount,
+    recentViews,
+    recentLikes,
+    latestTitle: raw.latestTitle || latestVideo.title || latestVideo.snippet?.title || "",
+    hasStats
+  };
+}
+
+function getClientData(channel) {
+  return clientStatsByHandle.get(channel.handle.toLowerCase()) || normalizeClientPayload({}, channel);
+}
+
+function getClientImpactWidth(data) {
+  if (!data.hasStats || !data.recentViews || !data.recentLikes) return 10;
+  const ratio = data.recentLikes / data.recentViews;
+  return Math.max(10, Math.min(100, ratio * 1800));
+}
+
+function updateClientSummary() {
+  const rows = clientChannels.map(getClientData);
+  const hasAnyStats = rows.some((row) => row.hasStats);
+  const totalViews = rows.reduce((total, row) => total + row.channelViews, 0);
+  const totalLikes = rows.reduce((total, row) => total + row.recentLikes, 0);
+
+  if (clientSummaryChannels) clientSummaryChannels.textContent = String(clientChannels.length);
+  if (clientSummaryViews) clientSummaryViews.textContent = hasAnyStats ? formatMetric(totalViews) : "--";
+  if (clientSummaryLikes) clientSummaryLikes.textContent = hasAnyStats ? formatMetric(totalLikes) : "--";
+}
+
+function renderClientCards() {
+  if (!clientGrid) return;
+  const copy = getCopy();
+
+  clientGrid.innerHTML = clientChannels.map((channel) => {
+    const data = getClientData(channel);
+    const impactWidth = getClientImpactWidth(data);
+    const impactRate = data.recentViews > 0 && data.recentLikes > 0
+      ? `${((data.recentLikes / data.recentViews) * 100).toFixed(1)}%`
+      : copy.clientPendingShort;
+    const avatar = data.thumbnail
+      ? `<img src="${escapeHtml(data.thumbnail)}" alt="">`
+      : `<span>${escapeHtml((data.title || channel.title).slice(0, 2).toUpperCase())}</span>`;
+    const latest = data.latestTitle
+      ? `${copy.clientLatest}: ${data.latestTitle}`
+      : channel.niche;
+
+    return `
+      <article class="client-card client-${escapeHtml(channel.tone)}${data.hasStats ? "" : " is-pending"}">
+        <a class="client-main" href="${escapeHtml(channel.url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`${copy.clientVisit}: ${data.title}`)}">
+          <span class="client-avatar" aria-hidden="true">${avatar}</span>
+          <span class="client-copy">
+            <strong>${escapeHtml(data.title)}</strong>
+            <small>@${escapeHtml(channel.handle)}</small>
+          </span>
+        </a>
+        <div class="client-metrics">
+          <span class="client-metric">
+            <strong>${formatMetric(data.channelViews)}</strong>
+            <small>${copy.clientViews}</small>
+          </span>
+          <span class="client-metric">
+            <strong>${formatMetric(data.subscriberCount)}</strong>
+            <small>${copy.clientSubscribers}</small>
+          </span>
+          <span class="client-metric">
+            <strong>${formatMetric(data.recentLikes)}</strong>
+            <small>${copy.clientLikes}</small>
+          </span>
+          <span class="client-metric">
+            <strong>${formatMetric(data.videoCount)}</strong>
+            <small>${copy.clientVideos}</small>
+          </span>
+        </div>
+        <div class="client-impact">
+          <span><b>${copy.clientImpact}</b><em>${escapeHtml(impactRate)}</em></span>
+          <i style="--impact-width: ${impactWidth.toFixed(1)}%;"></i>
+        </div>
+        <p>${escapeHtml(latest)}</p>
+      </article>
+    `;
+  }).join("");
+
+  updateClientSummary();
+  setClientStatus();
+}
+
+function mergeClientStats(payload = {}) {
+  const channels = Array.isArray(payload) ? payload : (payload.channels || []);
+  let synced = 0;
+
+  channels.forEach((raw) => {
+    const handle = String(raw.handle || "").replace(/^@/, "");
+    const fallback = clientChannels.find((channel) => channel.handle.toLowerCase() === handle.toLowerCase());
+    if (!fallback) return;
+
+    const normalized = normalizeClientPayload(raw, fallback);
+    clientStatsByHandle.set(fallback.handle.toLowerCase(), normalized);
+    if (normalized.hasStats) synced += 1;
+  });
+
+  clientStatsUpdatedAt = payload.updatedAt || "";
+  return synced;
+}
+
+async function fetchJson(url) {
+  const response = await fetch(url, { cache: "no-store" });
+  if (!response.ok) throw new Error(`stats-http-${response.status}`);
+  return response.json();
+}
+
+async function fetchConfiguredClientStats() {
+  const endpoint = window.TWICE_YOUTUBE_STATS_ENDPOINT;
+  if (!endpoint) return null;
+
+  const url = new URL(endpoint, window.location.href);
+  url.searchParams.set("handles", clientChannels.map((channel) => channel.handle).join(","));
+  return fetchJson(url.toString());
+}
+
+async function youtubeApiRequest(path, params, key) {
+  const url = new URL(`https://www.googleapis.com/youtube/v3/${path}`);
+  Object.entries({ ...params, key }).forEach(([name, value]) => {
+    if (value !== undefined && value !== "") url.searchParams.set(name, value);
+  });
+
+  return fetchJson(url.toString());
+}
+
+async function fetchYouTubeClientStats(channel, key) {
+  const channelPayload = await youtubeApiRequest("channels", {
+    part: "snippet,statistics,contentDetails",
+    forHandle: `@${channel.handle}`
+  }, key);
+  const item = channelPayload.items?.[0];
+  if (!item) throw new Error(`missing-channel-${channel.handle}`);
+
+  const uploads = item.contentDetails?.relatedPlaylists?.uploads;
+  const playlistPayload = uploads
+    ? await youtubeApiRequest("playlistItems", {
+      part: "contentDetails",
+      playlistId: uploads,
+      maxResults: "6"
+    }, key)
+    : { items: [] };
+  const ids = (playlistPayload.items || [])
+    .map((video) => video.contentDetails?.videoId)
+    .filter(Boolean);
+  const videoPayload = ids.length
+    ? await youtubeApiRequest("videos", {
+      part: "snippet,statistics",
+      id: ids.join(",")
+    }, key)
+    : { items: [] };
+  const videos = (videoPayload.items || []).map((video) => ({
+    id: video.id,
+    title: video.snippet?.title || "",
+    viewCount: video.statistics?.viewCount || "0",
+    likeCount: video.statistics?.likeCount || "0"
+  }));
+
+  return normalizeClientPayload({
+    handle: channel.handle,
+    url: channel.url,
+    title: item.snippet?.title,
+    thumbnail: item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.default?.url,
+    statistics: item.statistics,
+    videos
+  }, channel);
+}
+
+async function fetchDirectYouTubeStats() {
+  const key = window.TWICE_YOUTUBE_API_KEY;
+  if (!key) return null;
+
+  const channels = await Promise.all(clientChannels.map((channel) => fetchYouTubeClientStats(channel, key)));
+  return {
+    updatedAt: new Date().toISOString(),
+    source: "youtube-data-api-v3",
+    channels
+  };
+}
+
+async function loadClientStats(force = false) {
+  if (clientStatsRequested && !force) return;
+  clientStatsRequested = true;
+  setClientStatus("clientLoading", "neutral");
+
+  try {
+    const payload = await fetchConfiguredClientStats()
+      || await fetchDirectYouTubeStats()
+      || await fetchJson(clientStatsDataUrl);
+    const synced = mergeClientStats(payload);
+    renderClientCards();
+    setClientStatus(synced ? "clientLoaded" : "clientFallback", synced ? "success" : "error");
+  } catch (error) {
+    renderClientCards();
+    setClientStatus("clientFallback", "error");
+  }
+}
 
 const setLanguage = (language) => {
   currentLanguage = language === "en" ? "en" : "es";
@@ -243,6 +617,7 @@ const setLanguage = (language) => {
   setAvailability(editorIsAvailable);
   setTheme(currentTheme);
   setAmbientToggleState();
+  renderClientCards();
 };
 
 const getContactTarget = () => ({
@@ -467,6 +842,10 @@ const activatePanel = (panelName, updateHash = true) => {
     document.querySelector(".stage")?.scrollTo({ top: 0, behavior: "smooth" });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+
+  if (panelName === "clientes") {
+    loadClientStats();
+  }
 };
 
 const getAudioContext = () => {
@@ -617,18 +996,36 @@ buttons.forEach((button) => {
 });
 
 if (canUsePointerEffects) {
-  document.querySelectorAll(".video-tile, .payment-grid article, .contact-button, .control-switch").forEach((element) => {
+  document.querySelectorAll(".video-tile, .payment-grid article, .contact-button, .control-switch, .client-sync").forEach((element) => {
     element.addEventListener("pointermove", setLocalPointer, { passive: true });
   });
 }
 
-document.querySelectorAll(".payment-grid article, .contact-button, .control-switch").forEach((element, index) => {
+document.querySelectorAll(".payment-grid article, .contact-button, .control-switch, .client-sync").forEach((element, index) => {
   playOnPointerDown(element, index % 4);
 
   element.addEventListener("click", (event) => {
     playOnKeyboardClick(event, index % 4);
     burstAt(event);
   });
+});
+
+clientGrid?.addEventListener("pointerdown", (event) => {
+  const card = event.target.closest(".client-card");
+  if (!card || (event.button && event.button !== 0)) return;
+  playClick(2);
+});
+
+if (canUsePointerEffects) {
+  clientGrid?.addEventListener("pointermove", (event) => {
+    const card = event.target.closest(".client-card");
+    if (!card) return;
+    setLocalPointer({ currentTarget: card, clientX: event.clientX, clientY: event.clientY });
+  }, { passive: true });
+}
+
+clientRefresh?.addEventListener("click", () => {
+  loadClientStats(true);
 });
 
 themeToggle?.addEventListener("click", () => {

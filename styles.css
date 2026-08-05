@@ -432,6 +432,8 @@ body.theme-light .control-switch {
 body.theme-light .brand-mark,
 body.theme-light .menu-option span,
 body.theme-light .video-code,
+body.theme-light .client-api-chip,
+body.theme-light .client-metric,
 body.theme-light .payment-index {
   background: rgba(255, 255, 255, 0.58);
 }
@@ -439,6 +441,10 @@ body.theme-light .payment-index {
 body.theme-light .menu-console,
 body.theme-light .stage,
 body.theme-light .video-tile,
+body.theme-light .client-command,
+body.theme-light .client-summary article,
+body.theme-light .client-card,
+body.theme-light .client-sync,
 body.theme-light .payment-grid article,
 body.theme-light .payment-note,
 body.theme-light .contact-button,
@@ -699,6 +705,10 @@ h3 {
 }
 
 .video-tile,
+.client-command,
+.client-summary article,
+.client-card,
+.client-sync,
 .payment-grid article,
 .payment-note,
 .contact-button,
@@ -710,6 +720,8 @@ h3 {
 }
 
 .video-tile::after,
+.client-card::after,
+.client-sync::after,
 .payment-grid article::after,
 .contact-button::after {
   content: "";
@@ -723,6 +735,8 @@ h3 {
 }
 
 .video-tile:hover::after,
+.client-card:hover::after,
+.client-sync:hover::after,
 .payment-grid article:hover::after,
 .contact-button:hover::after {
   opacity: 1;
@@ -836,6 +850,293 @@ h3 {
   color: var(--muted);
   font-weight: 700;
   line-height: 1.25;
+}
+
+.client-sync {
+  position: relative;
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 0.72rem;
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.client-sync:hover,
+.client-sync:focus-visible {
+  border-color: rgba(246, 199, 104, 0.52);
+  box-shadow: 0 0 34px rgba(246, 199, 104, 0.12);
+  transform: translateY(-2px);
+}
+
+.client-command {
+  display: grid;
+  gap: 0.85rem;
+  margin-bottom: 0.9rem;
+  padding: 1rem;
+}
+
+.client-command p {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+
+.client-api-chip {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid rgba(246, 199, 104, 0.34);
+  border-radius: var(--radius);
+  color: var(--gold);
+  background: rgba(246, 199, 104, 0.08);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.client-api-chip.is-live {
+  border-color: rgba(53, 247, 161, 0.45);
+  color: #35f7a1;
+  background: rgba(53, 247, 161, 0.08);
+  text-shadow: 0 0 12px rgba(53, 247, 161, 0.38);
+}
+
+.client-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.client-summary article {
+  display: grid;
+  gap: 0.16rem;
+  min-height: 74px;
+  padding: 0.72rem;
+}
+
+.client-summary strong {
+  color: var(--cyan);
+  font-size: 1.35rem;
+  font-weight: 950;
+  line-height: 1;
+  text-shadow: 0 0 18px rgba(103, 232, 249, 0.28);
+}
+
+.client-summary span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.client-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.client-card {
+  --client-color: var(--cyan);
+  position: relative;
+  display: grid;
+  gap: 0.85rem;
+  min-height: 244px;
+  padding: 0.9rem;
+  isolation: isolate;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.client-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--client-color) 22%, transparent), transparent 7rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--client-color) 12%, transparent), transparent 58%);
+  opacity: 0.76;
+}
+
+.client-card:hover,
+.client-card:focus-within {
+  border-color: color-mix(in srgb, var(--client-color) 52%, transparent);
+  box-shadow: 0 0 42px color-mix(in srgb, var(--client-color) 16%, transparent);
+  transform: translateY(-4px);
+}
+
+.client-gold {
+  --client-color: var(--gold);
+}
+
+.client-cyan {
+  --client-color: var(--cyan);
+}
+
+.client-rose {
+  --client-color: var(--rose);
+}
+
+.client-silver {
+  --client-color: var(--silver);
+}
+
+.client-main {
+  display: flex;
+  align-items: center;
+  gap: 0.78rem;
+  min-width: 0;
+}
+
+.client-avatar {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--client-color) 48%, transparent);
+  border-radius: var(--radius);
+  color: var(--client-color);
+  background:
+    radial-gradient(circle at 40% 28%, rgba(255, 255, 255, 0.22), transparent 2rem),
+    rgba(4, 7, 14, 0.68);
+  box-shadow: inset 0 0 22px color-mix(in srgb, var(--client-color) 12%, transparent), 0 0 24px color-mix(in srgb, var(--client-color) 18%, transparent);
+  font-weight: 950;
+}
+
+.client-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.client-copy {
+  display: grid;
+  min-width: 0;
+}
+
+.client-copy strong {
+  overflow: hidden;
+  font-size: 1.05rem;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.client-copy small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.client-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.client-metric {
+  display: grid;
+  min-width: 0;
+  gap: 0.15rem;
+  padding: 0.55rem 0.42rem;
+  border: 1px solid rgba(226, 240, 255, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.client-metric strong {
+  overflow-wrap: anywhere;
+  color: var(--client-color);
+  font-size: 1rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.client-metric small {
+  color: var(--dim);
+  font-size: 0.64rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.client-impact {
+  display: grid;
+  gap: 0.42rem;
+}
+
+.client-impact span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.client-impact em {
+  color: var(--client-color);
+  font-style: normal;
+}
+
+.client-impact i {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(226, 240, 255, 0.12);
+}
+
+.client-impact i::before {
+  content: "";
+  display: block;
+  width: var(--impact-width, 10%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--client-color), var(--rose));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--client-color) 42%, transparent);
+}
+
+.client-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.client-card.is-pending .client-metric strong {
+  color: var(--dim);
+}
+
+.client-status {
+  min-height: 22px;
+  margin: 0.8rem 0 0;
+  color: var(--gold);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.client-status.is-success {
+  color: #35f7a1;
+  text-shadow: 0 0 14px rgba(53, 247, 161, 0.34);
+}
+
+.client-status.is-error {
+  color: #ff6b7f;
+  text-shadow: 0 0 14px rgba(255, 107, 127, 0.32);
 }
 
 .payment-grid {
@@ -1338,7 +1639,7 @@ h3 {
   }
 
   .game-menu {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .menu-option {
@@ -1368,6 +1669,8 @@ h3 {
   .stage::after,
   .panel.is-active::before,
   .video-tile::after,
+  .client-card::after,
+  .client-sync::after,
   .payment-grid article::after,
   .contact-button::after {
     display: none;
@@ -1488,7 +1791,7 @@ h3 {
   }
 
   .game-menu {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .menu-option {
@@ -1522,9 +1825,28 @@ h3 {
   }
 
   .video-grid,
+  .client-grid,
+  .client-summary,
   .payment-grid,
   .contact-actions {
     grid-template-columns: 1fr;
+  }
+
+  .client-sync {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .client-command {
+    padding: 0.85rem;
+  }
+
+  .client-card {
+    min-height: 0;
+  }
+
+  .client-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .video-tile {

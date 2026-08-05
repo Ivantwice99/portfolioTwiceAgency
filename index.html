@@ -7,7 +7,7 @@
     <meta name="description" content="Immersive menu for a freelance video editing portfolio.">
     <link rel="preload" href="assets/audio/final-fantasy-menu-click.mp3" as="audio">
     <link rel="preload" href="assets/audio/ambient-loop.mp3" as="audio" type="audio/mpeg">
-    <link rel="stylesheet" href="styles.css?v=video-center-v7">
+    <link rel="stylesheet" href="styles.css?v=clients-stats-v1">
   </head>
   <body>
     <div class="scene" aria-hidden="true">
@@ -64,12 +64,16 @@
             <span>01</span>
             <strong data-i18n="videos">Videos</strong>
           </button>
-          <button class="menu-option" type="button" data-panel-button="pagos">
+          <button class="menu-option" type="button" data-panel-button="clientes">
             <span>02</span>
+            <strong data-i18n="clients">Clients</strong>
+          </button>
+          <button class="menu-option" type="button" data-panel-button="pagos">
+            <span>03</span>
             <strong data-i18n="payments">Payment methods</strong>
           </button>
           <button class="menu-option" type="button" data-panel-button="contacto">
-            <span>03</span>
+            <span>04</span>
             <strong data-i18n="contact">Contact</strong>
           </button>
         </nav>
@@ -190,6 +194,48 @@
           </div>
         </div>
 
+        <div class="panel" data-panel="clientes">
+          <div class="panel-head">
+            <div>
+              <p class="kicker" data-i18n="clientsKicker">Client impact</p>
+              <h2 data-i18n="clientsTitle">Channel results</h2>
+            </div>
+            <button class="client-sync" type="button" data-client-refresh>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 6v5h-5"></path>
+                <path d="M4 18v-5h5"></path>
+                <path d="M19 11a7 7 0 0 0-12.2-4.2L4 9"></path>
+                <path d="M5 13a7 7 0 0 0 12.2 4.2L20 15"></path>
+              </svg>
+              <span data-i18n="refreshStats">Sync stats</span>
+            </button>
+          </div>
+
+          <div class="client-command">
+            <div>
+              <span class="client-api-chip" data-client-api-state data-i18n="clientApiReady">API ready</span>
+              <p data-i18n="clientsIntro">Public YouTube stats for views, recent likes, subscribers, and uploads.</p>
+            </div>
+            <div class="client-summary" aria-label="Client summary">
+              <article>
+                <strong data-client-summary="channels">4</strong>
+                <span data-i18n="totalClients">Clients</span>
+              </article>
+              <article>
+                <strong data-client-summary="views">--</strong>
+                <span data-i18n="totalViews">Total views</span>
+              </article>
+              <article>
+                <strong data-client-summary="likes">--</strong>
+                <span data-i18n="totalLikes">Recent likes</span>
+              </article>
+            </div>
+          </div>
+
+          <div class="client-grid" data-client-grid></div>
+          <p class="client-status" data-client-status role="status" aria-live="polite"></p>
+        </div>
+
         <div class="panel" data-panel="pagos">
           <div class="panel-head">
             <p class="kicker" data-i18n="paymentsKicker">Payments</p>
@@ -296,6 +342,6 @@
       </audio>
     </div>
 
-    <script src="script.js?v=video-center-v7"></script>
+    <script src="script.js?v=clients-stats-v1"></script>
   </body>
 </html>
