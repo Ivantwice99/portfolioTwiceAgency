@@ -8,7 +8,22 @@ const modalPanel = videoModal?.querySelector(".modal-panel");
 const modalScreen = document.querySelector(".modal-screen");
 const videoPlayer = document.querySelector("[data-video-player]");
 const videoFrame = document.querySelector("[data-video-frame]");
-const openVideoButtons = document.querySelectorAll("[data-open-video]");
+const videoGrid = document.querySelector("[data-video-grid]");
+const videoStatus = document.querySelector("[data-video-status]");
+const adminOpen = document.querySelector("[data-admin-open]");
+const adminModal = document.querySelector("[data-admin-modal]");
+const adminPanel = adminModal?.querySelector(".admin-panel");
+const adminLogin = document.querySelector("[data-admin-login]");
+const adminEditor = document.querySelector("[data-admin-editor]");
+const adminStatus = document.querySelector("[data-admin-status]");
+const adminGoogle = document.querySelector("[data-admin-google]");
+const googleLoginSlot = document.querySelector("[data-google-login]");
+const adminAccount = document.querySelector("[data-admin-account]");
+const adminList = document.querySelector("[data-admin-list]");
+const adminAdd = document.querySelector("[data-admin-add]");
+const adminSave = document.querySelector("[data-admin-save]");
+const adminLogout = document.querySelector("[data-admin-logout]");
+const adminCloseButtons = document.querySelectorAll("[data-admin-close]");
 const closeVideoButtons = document.querySelectorAll("[data-close-video]");
 const contactForm = document.querySelector("[data-contact-form]");
 const contactLinks = document.querySelectorAll("[data-contact-action]");
@@ -35,6 +50,9 @@ const editorIsAvailable = true;
 const clickSoundUrl = "assets/audio/final-fantasy-menu-click.mp3";
 const ambientVolumePercent = 5;
 const clientStatsDataUrl = "assets/data/youtube-clients.json";
+const videoDataUrl = "assets/data/videos.json";
+const adminApiBase = "/api/admin";
+const allowedAdminEmail = "vaguacateman@gmail.com";
 const clientChannels = [
   {
     handle: "RealidadPolicial",
@@ -91,6 +109,38 @@ const translations = {
     ads: "Ads",
     events: "Eventos",
     selectExample: "Selecciona un ejemplo",
+    loadingVideos: "Cargando ejemplos...",
+    videoLoadError: "No se pudieron cargar los videos.",
+    adminEditVideos: "Editar videos",
+    adminOnlyKicker: "Solo admin",
+    adminLoginTitle: "Selecciona tu cuenta de Google",
+    adminLoginCopy: "Solo el admin autorizado puede editar este menu de videos.",
+    adminGoogleButton: "Iniciar sesion con Google",
+    adminEditorKicker: "Editor de videos",
+    adminEditorTitle: "Gestionar ejemplos",
+    adminAddVideo: "Agregar video",
+    adminSaveVideos: "Guardar cambios",
+    adminLogout: "Salir",
+    adminOnlyMessage: "Solo el admin puede editar. Usa la cuenta autorizada.",
+    adminConfigMissing: "Falta configurar GOOGLE_CLIENT_ID en Vercel.",
+    adminLoginReady: "Elige la cuenta admin para continuar.",
+    adminLoginChecking: "Validando cuenta...",
+    adminLoginDenied: "Esta cuenta no tiene permiso. Solo puede editar el admin.",
+    adminLoginSuccess: "Acceso de admin activo.",
+    adminSaving: "Guardando cambios...",
+    adminSaved: "Cambios guardados. Vercel puede tardar unos minutos en desplegar.",
+    adminSaveError: "No se pudo guardar. Revisa la sesion o los secrets de Vercel.",
+    adminFieldId: "ID visible",
+    adminFieldRatio: "Formato",
+    adminFieldTone: "Color",
+    adminFieldDrive: "Link de Drive / preview",
+    adminFieldThumb: "Miniatura",
+    adminFieldTitleEn: "Titulo EN",
+    adminFieldDescEn: "Descripcion EN",
+    adminFieldTitleEs: "Titulo ES",
+    adminFieldDescEs: "Descripcion ES",
+    adminDeleteVideo: "Borrar",
+    adminDriveHint: "Pega un enlace de Google Drive o /preview. El video debe estar visible para quien tenga el enlace.",
     video01Title: "Tech reel futurista",
     video01Desc: "Robot, texto y ritmo vertical.",
     video02Title: "Intro anime gamer",
@@ -179,6 +229,38 @@ const translations = {
     ads: "Ads",
     events: "Events",
     selectExample: "Select an example",
+    loadingVideos: "Loading examples...",
+    videoLoadError: "Could not load videos.",
+    adminEditVideos: "Edit videos",
+    adminOnlyKicker: "Admin only",
+    adminLoginTitle: "Select your Google account",
+    adminLoginCopy: "Only the authorized admin can edit this video menu.",
+    adminGoogleButton: "Sign in with Google",
+    adminEditorKicker: "Video editor",
+    adminEditorTitle: "Manage examples",
+    adminAddVideo: "Add video",
+    adminSaveVideos: "Save changes",
+    adminLogout: "Logout",
+    adminOnlyMessage: "Only the admin can edit. Use the authorized account.",
+    adminConfigMissing: "GOOGLE_CLIENT_ID must be configured in Vercel.",
+    adminLoginReady: "Choose the admin account to continue.",
+    adminLoginChecking: "Checking account...",
+    adminLoginDenied: "This account is not allowed. Only the admin can edit.",
+    adminLoginSuccess: "Admin access active.",
+    adminSaving: "Saving changes...",
+    adminSaved: "Changes saved. Vercel may take a few minutes to deploy.",
+    adminSaveError: "Could not save. Check the session or Vercel secrets.",
+    adminFieldId: "Visible ID",
+    adminFieldRatio: "Format",
+    adminFieldTone: "Color",
+    adminFieldDrive: "Drive / preview link",
+    adminFieldThumb: "Thumbnail",
+    adminFieldTitleEn: "Title EN",
+    adminFieldDescEn: "Description EN",
+    adminFieldTitleEs: "Title ES",
+    adminFieldDescEs: "Description ES",
+    adminDeleteVideo: "Delete",
+    adminDriveHint: "Paste a Google Drive link or /preview. The video must be visible to anyone with the link.",
     video01Title: "Futuristic tech reel",
     video01Desc: "Robot, text, and vertical rhythm.",
     video02Title: "Anime gamer intro",
@@ -277,6 +359,13 @@ let clientStatsRequested = false;
 let clientStatusKey = "clientReadyPrompt";
 let clientStatusTone = "neutral";
 let clientStatsUpdatedAt = "";
+let portfolioVideos = [];
+let adminVideosDraft = [];
+let googleClientId = "";
+let adminCredential = sessionStorage.getItem("twiceAdminCredential") || "";
+let adminProfile = null;
+let adminConfigRequested = false;
+let adminGoogleInitialized = false;
 
 const setAvailability = (isAvailable) => {
   if (!availabilityStatus || !availabilityLabel) return;
@@ -482,6 +571,383 @@ async function fetchJson(url) {
   return response.json();
 }
 
+function setVideoStatus(key = "", tone = "neutral") {
+  if (!videoStatus) return;
+  const copy = getCopy();
+  videoStatus.textContent = key ? (copy[key] || key) : "";
+  videoStatus.classList.toggle("is-success", tone === "success");
+  videoStatus.classList.toggle("is-error", tone === "error");
+}
+
+function getLocalizedVideoText(video, field) {
+  const value = video?.[field];
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value[currentLanguage] || value.en || value.es || "";
+}
+
+function getVideoPreviewUrl(video) {
+  const rawUrl = video.previewUrl || video.driveUrl || "";
+  const driveId = getDriveFileId(rawUrl);
+  if (driveId) return `https://drive.google.com/file/d/${driveId}/preview`;
+  return rawUrl;
+}
+
+function getVideoThumbnailUrl(video) {
+  if (video.thumbnailUrl) return video.thumbnailUrl;
+  const driveId = getDriveFileId(video.previewUrl || video.driveUrl || "");
+  return driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w640` : "";
+}
+
+function normalizeVideoRecord(video = {}, index = 0) {
+  const code = String(video.code || video.id || `MDV-${String(index + 1).padStart(2, "0")}`).trim();
+  const uid = String(video.uid || code || `video-${index + 1}`).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const title = typeof video.title === "object"
+    ? video.title
+    : { en: String(video.title || ""), es: String(video.title || "") };
+  const description = typeof video.description === "object"
+    ? video.description
+    : { en: String(video.description || ""), es: String(video.description || "") };
+
+  return {
+    uid: uid || `video-${index + 1}`,
+    code,
+    ratio: video.ratio === "9:16" ? "9:16" : "16:9",
+    tone: ["gold", "cyan", "rose", "silver"].includes(video.tone) ? video.tone : ["gold", "cyan", "rose", "silver"][index % 4],
+    quality: video.quality || "original",
+    previewUrl: getVideoPreviewUrl(video),
+    thumbnailUrl: getVideoThumbnailUrl(video),
+    title: {
+      en: String(title.en || title.es || code),
+      es: String(title.es || title.en || code)
+    },
+    description: {
+      en: String(description.en || description.es || ""),
+      es: String(description.es || description.en || "")
+    }
+  };
+}
+
+function renderVideoTiles() {
+  if (!videoGrid) return;
+  const copy = getCopy();
+
+  if (!portfolioVideos.length) {
+    videoGrid.innerHTML = "";
+    setVideoStatus("loadingVideos");
+    return;
+  }
+
+  videoGrid.innerHTML = portfolioVideos.map((video, index) => {
+    const title = getLocalizedVideoText(video, "title") || video.code;
+    const description = getLocalizedVideoText(video, "description");
+    const thumbnail = getVideoThumbnailUrl(video);
+    const style = thumbnail ? ` style="--thumb: url('${escapeHtml(thumbnail)}');"` : "";
+
+    return `
+      <button class="video-tile" type="button" data-open-video="${escapeHtml(video.uid || `video-${index + 1}`)}" data-video-id="${escapeHtml(video.code)}" data-video-ratio="${escapeHtml(video.ratio)}" data-video-quality="${escapeHtml(video.quality || "original")}" data-video-title="${escapeHtml(title)}" data-video-preview="${escapeHtml(getVideoPreviewUrl(video))}">
+        <span class="video-thumb thumb-${escapeHtml(video.tone || "gold")}"${style} aria-hidden="true">
+          <i></i>
+        </span>
+        <span class="tile-copy">
+          <span class="video-code">ID ${escapeHtml(video.code)}</span>
+          <strong>${escapeHtml(title)}</strong>
+          <small>${escapeHtml(description)}</small>
+        </span>
+      </button>
+    `;
+  }).join("");
+
+  setVideoStatus("");
+}
+
+async function loadPortfolioVideos() {
+  setVideoStatus("loadingVideos");
+
+  try {
+    const payload = await fetchJson(`${videoDataUrl}?v=admin-video-editor-v1`);
+    portfolioVideos = (payload.videos || []).map(normalizeVideoRecord);
+    renderVideoTiles();
+  } catch (error) {
+    renderVideoTiles();
+    setVideoStatus("videoLoadError", "error");
+  }
+}
+
+function setAdminStatus(key = "", tone = "neutral") {
+  if (!adminStatus) return;
+  const copy = getCopy();
+  adminStatus.textContent = key ? (copy[key] || key) : "";
+  adminStatus.classList.toggle("is-success", tone === "success");
+  adminStatus.classList.toggle("is-error", tone === "error");
+}
+
+function setAdminMode(isAuthed) {
+  if (adminLogin) adminLogin.hidden = isAuthed;
+  if (adminEditor) adminEditor.hidden = !isAuthed;
+  if (adminAccount) {
+    adminAccount.textContent = adminProfile?.email
+      ? `${adminProfile.name || "Admin"} · ${adminProfile.email}`
+      : allowedAdminEmail;
+  }
+}
+
+function cloneVideoList(videos) {
+  return JSON.parse(JSON.stringify(videos || []));
+}
+
+async function loadAdminConfig() {
+  if (adminConfigRequested) return;
+  adminConfigRequested = true;
+
+  try {
+    const payload = await fetchJson(`${adminApiBase}/config`);
+    googleClientId = payload.googleClientId || "";
+  } catch {
+    googleClientId = "";
+  }
+}
+
+function initializeGoogleLogin() {
+  if (!googleClientId || adminGoogleInitialized || !window.google?.accounts?.id) return false;
+  adminGoogleInitialized = true;
+
+  window.google.accounts.id.initialize({
+    client_id: googleClientId,
+    callback: handleGoogleCredential,
+    auto_select: false,
+    cancel_on_tap_outside: true
+  });
+
+  if (googleLoginSlot) {
+    googleLoginSlot.innerHTML = "";
+    window.google.accounts.id.renderButton(googleLoginSlot, {
+      theme: currentTheme === "light" ? "outline" : "filled_black",
+      size: "large",
+      shape: "rectangular",
+      text: "signin_with",
+      width: Math.min(360, Math.max(220, googleLoginSlot.clientWidth || 260))
+    });
+  }
+
+  return true;
+}
+
+async function verifyAdminCredential(credential) {
+  const response = await fetch(`${adminApiBase}/videos`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    },
+    body: JSON.stringify({
+      action: "verify",
+      credential
+    })
+  });
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok || !payload.ok) {
+    throw new Error(payload.message || "admin-denied");
+  }
+
+  return payload.profile || {};
+}
+
+async function handleGoogleCredential(response) {
+  if (!response?.credential) {
+    setAdminStatus("adminLoginDenied", "error");
+    return;
+  }
+
+  adminCredential = response.credential;
+  sessionStorage.setItem("twiceAdminCredential", adminCredential);
+  setAdminStatus("adminLoginChecking");
+
+  try {
+    adminProfile = await verifyAdminCredential(adminCredential);
+    adminVideosDraft = cloneVideoList(portfolioVideos);
+    setAdminMode(true);
+    renderAdminEditor();
+    setAdminStatus("adminLoginSuccess", "success");
+  } catch {
+    sessionStorage.removeItem("twiceAdminCredential");
+    adminCredential = "";
+    adminProfile = null;
+    setAdminMode(false);
+    setAdminStatus("adminLoginDenied", "error");
+  }
+}
+
+async function openAdminModal() {
+  if (!adminModal || !adminPanel) return;
+  adminModal.classList.add("is-open");
+  adminModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  setAdminMode(false);
+  setAdminStatus("adminOnlyMessage");
+  adminPanel.focus();
+
+  await loadAdminConfig();
+
+  if (!googleClientId) {
+    setAdminStatus("adminConfigMissing", "error");
+    return;
+  }
+
+  if (!initializeGoogleLogin()) {
+    window.setTimeout(initializeGoogleLogin, 500);
+  }
+
+  if (adminCredential) {
+    await handleGoogleCredential({ credential: adminCredential });
+  } else {
+    setAdminStatus("adminLoginReady");
+  }
+}
+
+function closeAdminModal() {
+  if (!adminModal) return;
+  adminModal.classList.remove("is-open");
+  adminModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+}
+
+function createBlankVideo() {
+  const nextNumber = adminVideosDraft.length + 1;
+  return normalizeVideoRecord({
+    uid: `example-${String(nextNumber).padStart(2, "0")}`,
+    code: `MDV-${String(nextNumber).padStart(2, "0")}`,
+    ratio: "9:16",
+    tone: ["gold", "cyan", "rose", "silver"][adminVideosDraft.length % 4],
+    previewUrl: "",
+    thumbnailUrl: "",
+    title: {
+      en: "New video",
+      es: "Nuevo video"
+    },
+    description: {
+      en: "Short portfolio example.",
+      es: "Ejemplo breve de portafolio."
+    }
+  }, nextNumber - 1);
+}
+
+function renderAdminEditor() {
+  if (!adminList) return;
+  const copy = getCopy();
+
+  adminList.innerHTML = adminVideosDraft.map((video, index) => `
+    <article class="admin-video-card" data-admin-video-index="${index}">
+      <div class="admin-video-card-head">
+        <span class="video-code">ID ${escapeHtml(video.code)}</span>
+        <button class="admin-danger" type="button" data-admin-delete="${index}">${escapeHtml(copy.adminDeleteVideo)}</button>
+      </div>
+      <div class="admin-form-grid">
+        <label>
+          <span>${escapeHtml(copy.adminFieldId)}</span>
+          <input type="text" value="${escapeHtml(video.code)}" data-admin-field="code">
+        </label>
+        <label>
+          <span>${escapeHtml(copy.adminFieldRatio)}</span>
+          <select data-admin-field="ratio">
+            <option value="9:16"${video.ratio === "9:16" ? " selected" : ""}>9:16</option>
+            <option value="16:9"${video.ratio === "16:9" ? " selected" : ""}>16:9</option>
+          </select>
+        </label>
+        <label>
+          <span>${escapeHtml(copy.adminFieldTone)}</span>
+          <select data-admin-field="tone">
+            ${["gold", "cyan", "rose", "silver"].map((tone) => (
+              `<option value="${tone}"${video.tone === tone ? " selected" : ""}>${tone}</option>`
+            )).join("")}
+          </select>
+        </label>
+        <label class="admin-field-wide">
+          <span>${escapeHtml(copy.adminFieldDrive)}</span>
+          <input type="url" value="${escapeHtml(video.previewUrl)}" data-admin-field="previewUrl">
+          <small>${escapeHtml(copy.adminDriveHint)}</small>
+        </label>
+        <label class="admin-field-wide">
+          <span>${escapeHtml(copy.adminFieldThumb)}</span>
+          <input type="text" value="${escapeHtml(video.thumbnailUrl)}" data-admin-field="thumbnailUrl">
+        </label>
+        <label>
+          <span>${escapeHtml(copy.adminFieldTitleEn)}</span>
+          <input type="text" value="${escapeHtml(video.title.en)}" data-admin-field="title.en">
+        </label>
+        <label>
+          <span>${escapeHtml(copy.adminFieldTitleEs)}</span>
+          <input type="text" value="${escapeHtml(video.title.es)}" data-admin-field="title.es">
+        </label>
+        <label>
+          <span>${escapeHtml(copy.adminFieldDescEn)}</span>
+          <textarea rows="3" data-admin-field="description.en">${escapeHtml(video.description.en)}</textarea>
+        </label>
+        <label>
+          <span>${escapeHtml(copy.adminFieldDescEs)}</span>
+          <textarea rows="3" data-admin-field="description.es">${escapeHtml(video.description.es)}</textarea>
+        </label>
+      </div>
+    </article>
+  `).join("");
+}
+
+function updateAdminDraftField(index, field, value) {
+  const video = adminVideosDraft[index];
+  if (!video) return;
+
+  if (field.includes(".")) {
+    const [group, key] = field.split(".");
+    video[group] = video[group] || {};
+    video[group][key] = value;
+  } else {
+    video[field] = value;
+  }
+
+  adminVideosDraft[index] = normalizeVideoRecord(video, index);
+}
+
+async function saveAdminVideos() {
+  if (!adminCredential) {
+    setAdminStatus("adminLoginDenied", "error");
+    return;
+  }
+
+  setAdminStatus("adminSaving");
+  if (adminSave) adminSave.disabled = true;
+
+  try {
+    const response = await fetch(`${adminApiBase}/videos`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({
+        action: "save",
+        credential: adminCredential,
+        videos: adminVideosDraft
+      })
+    });
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || !payload.ok) {
+      throw new Error(payload.message || "save-failed");
+    }
+
+    portfolioVideos = (payload.videos || adminVideosDraft).map(normalizeVideoRecord);
+    adminVideosDraft = cloneVideoList(portfolioVideos);
+    renderVideoTiles();
+    renderAdminEditor();
+    setAdminStatus("adminSaved", "success");
+  } catch {
+    setAdminStatus("adminSaveError", "error");
+  } finally {
+    if (adminSave) adminSave.disabled = false;
+  }
+}
+
 async function fetchConfiguredClientStats() {
   const endpoint = window.TWICE_YOUTUBE_STATS_ENDPOINT;
   if (!endpoint) return null;
@@ -603,6 +1069,8 @@ const setLanguage = (language) => {
   setAvailability(editorIsAvailable);
   setTheme(currentTheme);
   setAmbientToggleState();
+  renderVideoTiles();
+  renderAdminEditor();
   renderClientCards();
 };
 
@@ -740,6 +1208,7 @@ setLanguage(currentLanguage);
 setTheme(currentTheme);
 setAmbientToggleState();
 scheduleAmbientAutoplay();
+loadPortfolioVideos();
 
 if (stars) {
   const total = canUseMotion
@@ -982,7 +1451,7 @@ buttons.forEach((button) => {
 });
 
 if (canUsePointerEffects) {
-  document.querySelectorAll(".video-tile, .payment-grid article, .contact-button, .control-switch, .client-sync").forEach((element) => {
+  document.querySelectorAll(".payment-grid article, .contact-button, .control-switch, .client-sync").forEach((element) => {
     element.addEventListener("pointermove", setLocalPointer, { passive: true });
   });
 }
@@ -1012,6 +1481,105 @@ if (canUsePointerEffects) {
 
 clientRefresh?.addEventListener("click", () => {
   loadClientStats(true);
+});
+
+videoGrid?.addEventListener("pointerdown", (event) => {
+  const button = event.target.closest("[data-open-video]");
+  if (!button || (event.button && event.button !== 0)) return;
+  playClick(3);
+});
+
+videoGrid?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-open-video]");
+  if (!button) return;
+
+  playOnKeyboardClick(event, 3);
+  burstAt(event);
+  openVideo(
+    button.dataset.videoTitle || button.querySelector(".tile-copy strong")?.textContent.trim() || "Video",
+    button.dataset.videoPreview || "",
+    button.dataset.videoRatio || "16:9"
+  );
+});
+
+if (canUsePointerEffects) {
+  videoGrid?.addEventListener("pointermove", (event) => {
+    const tile = event.target.closest(".video-tile");
+    if (!tile) return;
+    setLocalPointer({ currentTarget: tile, clientX: event.clientX, clientY: event.clientY });
+  }, { passive: true });
+}
+
+adminOpen?.addEventListener("pointerdown", (event) => {
+  if (event.button && event.button !== 0) return;
+  playClick(1);
+});
+
+adminOpen?.addEventListener("click", (event) => {
+  playOnKeyboardClick(event, 1);
+  burstAt(event);
+  openAdminModal();
+});
+
+adminGoogle?.addEventListener("click", () => {
+  if (!initializeGoogleLogin()) {
+    setAdminStatus(googleClientId ? "adminLoginReady" : "adminConfigMissing", googleClientId ? "neutral" : "error");
+    return;
+  }
+
+  window.google.accounts.id.prompt();
+});
+
+adminCloseButtons.forEach((button) => {
+  playOnPointerDown(button, 1);
+  button.addEventListener("click", (event) => {
+    playOnKeyboardClick(event, 1);
+    burstAt(event);
+    closeAdminModal();
+  });
+});
+
+adminAdd?.addEventListener("click", () => {
+  adminVideosDraft.push(createBlankVideo());
+  renderAdminEditor();
+});
+
+adminSave?.addEventListener("click", () => {
+  saveAdminVideos();
+});
+
+adminLogout?.addEventListener("click", () => {
+  sessionStorage.removeItem("twiceAdminCredential");
+  adminCredential = "";
+  adminProfile = null;
+  setAdminMode(false);
+  setAdminStatus("adminLoginReady");
+});
+
+adminList?.addEventListener("input", (event) => {
+  const field = event.target.dataset.adminField;
+  const card = event.target.closest("[data-admin-video-index]");
+  if (!field || !card) return;
+
+  updateAdminDraftField(Number(card.dataset.adminVideoIndex), field, event.target.value);
+});
+
+adminList?.addEventListener("change", (event) => {
+  const field = event.target.dataset.adminField;
+  const card = event.target.closest("[data-admin-video-index]");
+  if (!field || !card) return;
+
+  updateAdminDraftField(Number(card.dataset.adminVideoIndex), field, event.target.value);
+  renderAdminEditor();
+});
+
+adminList?.addEventListener("click", (event) => {
+  const deleteButton = event.target.closest("[data-admin-delete]");
+  if (!deleteButton) return;
+
+  adminVideosDraft.splice(Number(deleteButton.dataset.adminDelete), 1);
+  adminVideosDraft = adminVideosDraft.map(normalizeVideoRecord);
+  renderAdminEditor();
 });
 
 themeToggle?.addEventListener("click", () => {
@@ -1101,23 +1669,23 @@ window.addEventListener("hashchange", () => {
   }
 });
 
-const withAutoplay = (url) => {
+function withAutoplay(url) {
   if (!url) return "";
   return `${url}${url.includes("?") ? "&" : "?"}autoplay=1`;
-};
+}
 
-const getDriveFileId = (url) => {
+function getDriveFileId(url) {
   if (!url) return "";
   const pathMatch = url.match(/\/d\/([^/]+)/);
   if (pathMatch) return pathMatch[1];
   const queryMatch = url.match(/[?&]id=([^&]+)/);
   return queryMatch ? queryMatch[1] : "";
-};
+}
 
-const getDriveDownloadUrl = (url) => {
+function getDriveDownloadUrl(url) {
   const id = getDriveFileId(url);
   return id ? `https://drive.usercontent.google.com/download?id=${id}&export=download` : "";
-};
+}
 
 let currentVideoFallback = "";
 let shouldRestoreAmbientAfterVideo = false;
@@ -1243,20 +1811,6 @@ videoPlayer?.addEventListener("error", () => {
   showEmbedVideo(fallback);
 });
 
-openVideoButtons.forEach((button) => {
-  playOnPointerDown(button, 3);
-
-  button.addEventListener("click", (event) => {
-    playOnKeyboardClick(event, 3);
-    burstAt(event);
-    openVideo(
-      button.querySelector(".tile-copy strong")?.textContent.trim() || button.dataset.videoTitle || "Video",
-      button.dataset.videoPreview || "",
-      button.dataset.videoRatio || "16:9"
-    );
-  });
-});
-
 closeVideoButtons.forEach((button) => {
   playOnPointerDown(button, 1);
 
@@ -1270,6 +1824,7 @@ closeVideoButtons.forEach((button) => {
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeVideo();
+    closeAdminModal();
   }
 });
 

@@ -1,0 +1,158 @@
+{
+  "updatedAt": "2026-08-05T00:00:00.000Z",
+  "videos": [
+    {
+      "uid": "example-01",
+      "code": "MDV-01",
+      "ratio": "9:16",
+      "tone": "gold",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/17E77VP6PiXkoingGngcMrNdjlcsT8xyF/preview",
+      "thumbnailUrl": "https://drive.google.com/thumbnail?id=17E77VP6PiXkoingGngcMrNdjlcsT8xyF&sz=w640",
+      "title": {
+        "en": "Futuristic tech reel",
+        "es": "Tech reel futurista"
+      },
+      "description": {
+        "en": "Robot, text, and vertical rhythm.",
+        "es": "Robot, texto y ritmo vertical."
+      }
+    },
+    {
+      "uid": "example-02",
+      "code": "MDV-02",
+      "ratio": "16:9",
+      "tone": "cyan",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/1T6NIZPnUTuuN5J4d-B4F8zDAqmQkLMbJ/preview",
+      "thumbnailUrl": "https://drive.google.com/thumbnail?id=1T6NIZPnUTuuN5J4d-B4F8zDAqmQkLMbJ&sz=w640",
+      "title": {
+        "en": "Anime gamer intro",
+        "es": "Intro anime gamer"
+      },
+      "description": {
+        "en": "Fast hook with visual energy.",
+        "es": "Hook rapido con energia visual."
+      }
+    },
+    {
+      "uid": "example-03",
+      "code": "MDV-03",
+      "ratio": "16:9",
+      "tone": "rose",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/1Ajib5mZpaBzbeHMBqdPiEVEvUV5hxQGo/preview",
+      "thumbnailUrl": "https://drive.google.com/thumbnail?id=1Ajib5mZpaBzbeHMBqdPiEVEvUV5hxQGo&sz=w640",
+      "title": {
+        "en": "Urban aerial view",
+        "es": "Vista aerea urbana"
+      },
+      "description": {
+        "en": "Drone, mood, and cinematic cut.",
+        "es": "Dron, ambiente y corte cinematico."
+      }
+    },
+    {
+      "uid": "example-04",
+      "code": "MDV-04",
+      "ratio": "16:9",
+      "tone": "silver",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/1ScPM1zKp2AYPdtvcvuXmBLkQQpJoXh3I/preview",
+      "thumbnailUrl": "https://drive.google.com/thumbnail?id=1ScPM1zKp2AYPdtvcvuXmBLkQQpJoXh3I&sz=w640",
+      "title": {
+        "en": "Urban dance",
+        "es": "Baile urbano"
+      },
+      "description": {
+        "en": "Split screen and beat-driven cuts.",
+        "es": "Split screen y cortes al beat."
+      }
+    },
+    {
+      "uid": "example-05",
+      "code": "MDV-05",
+      "ratio": "16:9",
+      "tone": "gold",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/1Cf58UjHlIwLXMpe2d3XH2vTrdsXkk1jr/preview",
+      "thumbnailUrl": "assets/thumbs/mdv-05-thumb.jpg",
+      "title": {
+        "en": "Dramatic hook",
+        "es": "Hook dramatico"
+      },
+      "description": {
+        "en": "Large text and visual impact.",
+        "es": "Texto grande y golpe visual."
+      }
+    },
+    {
+      "uid": "example-06",
+      "code": "MDV-06",
+      "ratio": "16:9",
+      "tone": "cyan",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/1HEozkUvYzi2QIENRymAtBmJMluyj7RLY/preview",
+      "thumbnailUrl": "assets/thumbs/mdv-06-thumb.jpg",
+      "title": {
+        "en": "Dark montage",
+        "es": "Montaje oscuro"
+      },
+      "description": {
+        "en": "Atmosphere, pause, and tension.",
+        "es": "Atmosfera, pausa y tension."
+      }
+    },
+    {
+      "uid": "example-07",
+      "code": "MDV-07",
+      "ratio": "16:9",
+      "tone": "rose",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/11Ddn0PCrw5_E86smzJrZcqvWUxH6koHu/preview",
+      "thumbnailUrl": "assets/thumbs/mdv-07-thumb.jpg",
+      "title": {
+        "en": "Color and energy",
+        "es": "Color y energia"
+      },
+      "description": {
+        "en": "Flashes, saturation, and rhythm.",
+        "es": "Flashes, saturacion y ritmo."
+      }
+    },
+    {
+      "uid": "example-08",
+      "code": "MDV-08",
+      "ratio": "16:9",
+      "tone": "silver",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/1fD3VrjeMry7Qhdkwrb-qtWQm9aE0cs1h/preview",
+      "thumbnailUrl": "https://drive.google.com/thumbnail?id=1fD3VrjeMry7Qhdkwrb-qtWQm9aE0cs1h&sz=w640",
+      "title": {
+        "en": "Social cut",
+        "es": "Corte social"
+      },
+      "description": {
+        "en": "Key moments for social media.",
+        "es": "Momentos clave para redes."
+      }
+    },
+    {
+      "uid": "example-09",
+      "code": "MDV-09",
+      "ratio": "16:9",
+      "tone": "gold",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/1sFyOq4ffeiGpHAtQzRjs2AhCYAHQoruv/preview",
+      "thumbnailUrl": "https://drive.google.com/thumbnail?id=1sFyOq4ffeiGpHAtQzRjs2AhCYAHQoruv&sz=w640",
+      "title": {
+        "en": "Cinematic closer",
+        "es": "Cierre cinematico"
+      },
+      "description": {
+        "en": "Landscape, pause, and clean ending.",
+        "es": "Paisaje, pausa y final limpio."
+      }
+    }
+  ]
+}

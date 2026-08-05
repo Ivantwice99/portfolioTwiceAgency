@@ -40,3 +40,24 @@ node scripts/update-youtube-stats.mjs
 ```
 
 For automated premium stats, add the SocialBlade or YouTube keys as GitHub repository secrets and run the `Update YouTube client stats` workflow.
+
+## Admin Video Editor
+
+The Videos panel reads `assets/data/videos.json`.
+
+The admin editor is protected by Google Sign-In and only allows:
+
+```text
+vaguacateman@gmail.com
+```
+
+Set these Vercel environment variables:
+
+```text
+GOOGLE_CLIENT_ID=your-google-oauth-web-client-id
+GITHUB_CONTENTS_TOKEN=your-fine-grained-github-token-with-contents-read-write
+GITHUB_REPO=Ivantwice99/portfolioTwiceAgency
+GITHUB_BRANCH=main
+```
+
+In Google Cloud, create an OAuth Web client and add your Vercel URL as an authorized JavaScript origin. The editor saves changes by committing `assets/data/videos.json` through the GitHub Contents API, then Vercel redeploys from the new commit.
