@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-14T13:46:52.453Z",
+  "updatedAt": "2026-08-15T01:52:25.651Z",
   "source": "youtube-public-snapshot",
   "channels": [
     {
@@ -10,34 +10,40 @@
       "channelId": "UCq2Nmwq8IhC-ztBoKIs4Qsg",
       "thumbnail": "https://yt3.googleusercontent.com/5R90g75WYI0sYclhuF_fMFX9Z_cPlrr0mJckYHkhl78BOa1RHfj6Iu_nLsMxRU9Ar1Fv8dxs5Q=s160-c-k-c0x00ffffff-no-rj",
       "statistics": {
-        "viewCount": "8603201",
+        "viewCount": "8609202",
         "subscriberCount": "18100",
-        "videoCount": "283"
+        "videoCount": "284"
       },
-      "latestTitle": "Cuando las MADRES TÓXICAS del BARRIO Fueron ARRESTADAS Frente a Sus Hijos",
+      "latestTitle": "Su Madre la Echó de Casa y la Policía Descubrió su SECRETO",
       "recent": {
-        "views": 40400,
-        "likes": 1309,
+        "views": 30658,
+        "likes": 1081,
         "sample": 6
       },
       "videos": [
         {
+          "id": "KnAMdJlpjPg",
+          "title": "Su Madre la Echó de Casa y la Policía Descubrió su SECRETO",
+          "viewCount": "658",
+          "likeCount": "39"
+        },
+        {
           "id": "erz9N24CIpU",
           "title": "Cuando las MADRES TÓXICAS del BARRIO Fueron ARRESTADAS Frente a Sus Hijos",
-          "viewCount": "2300",
-          "likeCount": "105"
+          "viewCount": "2600",
+          "likeCount": "111"
         },
         {
           "id": "XvYExBolBOY",
           "title": "Lo que Pasó Cuando TERRORIZARON a un EMPLEADO Frente a TESTIGOS",
-          "viewCount": "3300",
+          "viewCount": "3400",
           "likeCount": "183"
         },
         {
           "id": "5p59b4NtHJ4",
           "title": "Cree que Puede Amenzar a un Policía y Se Arrepiente al Instante",
-          "viewCount": "6700",
-          "likeCount": "238"
+          "viewCount": "6900",
+          "likeCount": "242"
         },
         {
           "id": "TmOypVm1NrI",
@@ -49,13 +55,7 @@
           "id": "E5HmVpvPtqI",
           "title": "Clientes que Pensaban que Eran los DUEÑOS del Restaurante… (GRAVE ERROR)",
           "viewCount": "12000",
-          "likeCount": "315"
-        },
-        {
-          "id": "vj6CNaw5HDA",
-          "title": "La Pareja 'INTOCABLE' que Terminó ESPOSADA Fuera del Hotel",
-          "viewCount": "11000",
-          "likeCount": "278"
+          "likeCount": "316"
         }
       ],
       "source": "youtube-public-snapshot"
@@ -68,14 +68,14 @@
       "channelId": "UCEMXB9t_RqxXjSmWER1cPsw",
       "thumbnail": "https://yt3.ggpht.com/LRf1OW0txRPzsAg43UU2Aqc-6kXxjnvdoF38itrocglVhWTx--j3jiKOXlb_D35PjnMO9QT2FN1Mfw=s1600-c-fcrop64=1,00002000ffffdfff-rw-nd-v1",
       "statistics": {
-        "viewCount": "6326188",
+        "viewCount": "6326873",
         "subscriberCount": "133000",
         "videoCount": "99"
       },
       "latestTitle": "EL PAPA NEGRO – El Secreto MÁS TERRADOR del Vaticano",
       "recent": {
         "views": 156200,
-        "likes": 8946,
+        "likes": 8947,
         "sample": 6
       },
       "videos": [
@@ -101,7 +101,7 @@
           "id": "aXpBPvHesMo",
           "title": "Saturno NO Es un Planeta - es una Prisión para Almas",
           "viewCount": "90000",
-          "likeCount": "5105"
+          "likeCount": "5106"
         },
         {
           "id": "xWpAKwyP2nw",
@@ -126,7 +126,7 @@
       "channelId": "UCy-aPWvyq50o6sH5rtDJgFQ",
       "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_nMdYoxwG2uEsL6nBTHfVJJWktEYST0PWQEyeHFu_I0sA=s88-c-k-c0x00ffffff-no-rj-mo",
       "statistics": {
-        "viewCount": "4778286",
+        "viewCount": "4778552",
         "subscriberCount": "21900",
         "videoCount": "361"
       },
@@ -184,9 +184,9 @@
       "channelId": "UCmNBIEv7uz_zDnZkGfxwasQ",
       "thumbnail": "https://yt3.googleusercontent.com/Qb1-MNczZat1HZ379iIQdB-rL0rButnN8jTGibddWg2nSftYd3gBqng2Uefjn9GEWKux1G1Y=s160-c-k-c0x00ffffff-no-rj",
       "statistics": {
-        "viewCount": "35716321",
+        "viewCount": "35729198",
         "subscriberCount": "92500",
-        "videoCount": "296"
+        "videoCount": "297"
       },
       "latestTitle": "¡PLAN CONTRA MADURO! MOVIMIENTO BÉLICO DESDE PANAMÁ APUNTAN A VENEZUELA",
       "recent": {
