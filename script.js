@@ -137,6 +137,12 @@ const translations = {
     adminFieldTitleEs: "Titulo ES",
     adminFieldDescEs: "Descripcion ES",
     adminDeleteVideo: "Borrar",
+    adminPosition: "Posicion",
+    adminMoveVideo: "Mover video",
+    adminMoveUp: "Subir video",
+    adminMoveDown: "Bajar video",
+    adminDragVideo: "Arrastrar para ordenar",
+    adminOrderUpdated: "Orden actualizado. Guarda cambios para publicarlo.",
     adminDriveHint: "Pega un enlace de Google Drive o /preview. El video debe estar visible para quien tenga el enlace.",
     video01Title: "Tech reel futurista",
     video01Desc: "Robot, texto y ritmo vertical.",
@@ -257,6 +263,12 @@ const translations = {
     adminFieldTitleEs: "Title ES",
     adminFieldDescEs: "Description ES",
     adminDeleteVideo: "Delete",
+    adminPosition: "Position",
+    adminMoveVideo: "Move video",
+    adminMoveUp: "Move video up",
+    adminMoveDown: "Move video down",
+    adminDragVideo: "Drag to reorder",
+    adminOrderUpdated: "Order updated. Save changes to publish it.",
     adminDriveHint: "Paste a Google Drive link or /preview. The video must be visible to anyone with the link.",
     video01Title: "Futuristic tech reel",
     video01Desc: "Robot, text, and vertical rhythm.",
@@ -366,6 +378,7 @@ let adminCredential = sessionStorage.getItem("twiceAdminCredential") || "";
 let adminProfile = null;
 let adminConfigRequested = false;
 let adminGoogleInitialized = false;
+let draggedAdminVideoIndex = null;
 
 const setAvailability = (isAvailable) => {
   if (!availabilityStatus || !availabilityLabel) return;
@@ -833,15 +846,91 @@ function createBlankVideo() {
   }, nextNumber - 1);
 }
 
+function focusAdminVideo(index) {
+  window.requestAnimationFrame(() => {
+    adminList?.querySelector(`[data-admin-video-index="${index}"] .admin-drag-handle`)?.focus();
+  });
+}
+
+function moveAdminVideo(fromIndex, toIndex, shouldFocus = true) {
+  const lastIndex = adminVideosDraft.length - 1;
+  const from = Number(fromIndex);
+  const to = Math.max(0, Math.min(Number(toIndex), lastIndex));
+
+  if (!Number.isInteger(from) || from < 0 || from > lastIndex || from === to) {
+    return false;
+  }
+
+  const [video] = adminVideosDraft.splice(from, 1);
+  adminVideosDraft.splice(to, 0, video);
+  adminVideosDraft = adminVideosDraft.map(normalizeVideoRecord);
+  renderAdminEditor();
+  if (shouldFocus) focusAdminVideo(to);
+  setAdminStatus("adminOrderUpdated", "success");
+  return true;
+}
+
+function clearAdminDropState() {
+  adminList?.querySelectorAll(".is-dragging, .is-drop-before, .is-drop-after").forEach((card) => {
+    card.classList.remove("is-dragging", "is-drop-before", "is-drop-after");
+  });
+}
+
+function getAdminDropIndex(event, card) {
+  const targetIndex = Number(card.dataset.adminVideoIndex);
+  const rect = card.getBoundingClientRect();
+  const insertAfter = event.clientY > rect.top + rect.height / 2;
+  let nextIndex = targetIndex + (insertAfter ? 1 : 0);
+
+  if (Number(draggedAdminVideoIndex) < nextIndex) {
+    nextIndex -= 1;
+  }
+
+  return nextIndex;
+}
+
+function adminArrowIcon(direction) {
+  const path = direction < 0
+    ? "M12 19V5M5 12l7-7 7 7"
+    : "M12 5v14M5 12l7 7 7-7";
+
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"></path></svg>`;
+}
+
+function adminGripIcon() {
+  return `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 6h.01M12 6h.01M16 6h.01M8 12h.01M12 12h.01M16 12h.01M8 18h.01M12 18h.01M16 18h.01"></path>
+    </svg>
+  `;
+}
+
 function renderAdminEditor() {
   if (!adminList) return;
   const copy = getCopy();
+  const totalVideos = adminVideosDraft.length;
 
   adminList.innerHTML = adminVideosDraft.map((video, index) => `
     <article class="admin-video-card" data-admin-video-index="${index}">
       <div class="admin-video-card-head">
-        <span class="video-code">ID ${escapeHtml(video.code)}</span>
-        <button class="admin-danger" type="button" data-admin-delete="${index}">${escapeHtml(copy.adminDeleteVideo)}</button>
+        <div class="admin-video-title">
+          <span class="video-code">ID ${escapeHtml(video.code)}</span>
+          <span class="admin-position">${escapeHtml(copy.adminPosition)} ${String(index + 1).padStart(2, "0")}</span>
+        </div>
+        <div class="admin-card-actions">
+          <div class="admin-reorder" aria-label="${escapeHtml(copy.adminMoveVideo)}">
+            <button class="admin-icon-button" type="button" data-admin-move="${index}" data-admin-direction="-1" aria-label="${escapeHtml(copy.adminMoveUp)}" title="${escapeHtml(copy.adminMoveUp)}"${index === 0 ? " disabled" : ""}>
+              ${adminArrowIcon(-1)}
+            </button>
+            <button class="admin-icon-button" type="button" data-admin-move="${index}" data-admin-direction="1" aria-label="${escapeHtml(copy.adminMoveDown)}" title="${escapeHtml(copy.adminMoveDown)}"${index === totalVideos - 1 ? " disabled" : ""}>
+              ${adminArrowIcon(1)}
+            </button>
+            <button class="admin-icon-button admin-drag-handle" type="button" draggable="true" data-admin-drag-handle aria-label="${escapeHtml(copy.adminDragVideo)}" title="${escapeHtml(copy.adminDragVideo)}">
+              ${adminGripIcon()}
+            </button>
+          </div>
+          <button class="admin-danger" type="button" data-admin-delete="${index}">${escapeHtml(copy.adminDeleteVideo)}</button>
+        </div>
       </div>
       <div class="admin-form-grid">
         <label>
@@ -1600,12 +1689,68 @@ adminList?.addEventListener("change", (event) => {
 });
 
 adminList?.addEventListener("click", (event) => {
+  const moveButton = event.target.closest("[data-admin-move]");
+  if (moveButton) {
+    const fromIndex = Number(moveButton.dataset.adminMove);
+    const direction = Number(moveButton.dataset.adminDirection);
+    moveAdminVideo(fromIndex, fromIndex + direction);
+    return;
+  }
+
   const deleteButton = event.target.closest("[data-admin-delete]");
   if (!deleteButton) return;
 
   adminVideosDraft.splice(Number(deleteButton.dataset.adminDelete), 1);
   adminVideosDraft = adminVideosDraft.map(normalizeVideoRecord);
   renderAdminEditor();
+});
+
+adminList?.addEventListener("dragstart", (event) => {
+  const handle = event.target.closest("[data-admin-drag-handle]");
+  const card = handle?.closest("[data-admin-video-index]");
+  if (!handle || !card) {
+    event.preventDefault();
+    return;
+  }
+
+  draggedAdminVideoIndex = Number(card.dataset.adminVideoIndex);
+  card.classList.add("is-dragging");
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/plain", String(draggedAdminVideoIndex));
+});
+
+adminList?.addEventListener("dragover", (event) => {
+  if (draggedAdminVideoIndex === null) return;
+
+  const card = event.target.closest("[data-admin-video-index]");
+  if (!card || !adminList.contains(card)) return;
+
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
+  const rect = card.getBoundingClientRect();
+  const insertAfter = event.clientY > rect.top + rect.height / 2;
+
+  clearAdminDropState();
+  adminList.querySelector(`[data-admin-video-index="${draggedAdminVideoIndex}"]`)?.classList.add("is-dragging");
+  card.classList.add(insertAfter ? "is-drop-after" : "is-drop-before");
+});
+
+adminList?.addEventListener("drop", (event) => {
+  if (draggedAdminVideoIndex === null) return;
+
+  const card = event.target.closest("[data-admin-video-index]");
+  if (!card || !adminList.contains(card)) return;
+
+  event.preventDefault();
+  const nextIndex = getAdminDropIndex(event, card);
+  moveAdminVideo(draggedAdminVideoIndex, nextIndex);
+  draggedAdminVideoIndex = null;
+  clearAdminDropState();
+});
+
+adminList?.addEventListener("dragend", () => {
+  draggedAdminVideoIndex = null;
+  clearAdminDropState();
 });
 
 themeToggle?.addEventListener("click", () => {
