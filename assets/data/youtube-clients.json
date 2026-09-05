@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-04T16:25:27.167Z",
+  "updatedAt": "2026-09-05T04:34:56.911Z",
   "source": "youtube-public-snapshot",
   "channels": [
     {
@@ -12,50 +12,50 @@
       "statistics": {
         "viewCount": "8983183",
         "subscriberCount": "18400",
-        "videoCount": "292"
+        "videoCount": "293"
       },
-      "latestTitle": "Intentó Cruzar una FORTUNA en el AEROPUERTO y lo Perdió TODO",
+      "latestTitle": "Pensó que Podía Robar y Volar Tranquilo… le SALIÓ MUY MAL",
       "recent": {
-        "views": 94900,
-        "likes": 1420,
+        "views": 54300,
+        "likes": 1111,
         "sample": 6
       },
       "videos": [
         {
+          "id": "hrStLglu_Zk",
+          "title": "Pensó que Podía Robar y Volar Tranquilo… le SALIÓ MUY MAL",
+          "viewCount": "4600",
+          "likeCount": "117"
+        },
+        {
           "id": "B2aSJy7NXSc",
           "title": "Intentó Cruzar una FORTUNA en el AEROPUERTO y lo Perdió TODO",
-          "viewCount": "2100",
-          "likeCount": "68"
+          "viewCount": "3800",
+          "likeCount": "81"
         },
         {
           "id": "HyKOBW4zwrU",
           "title": "Creyó que Podía ENGAÑAR a la POLICÍA... (Karma Instantáneo)",
-          "viewCount": "9900",
-          "likeCount": "184"
+          "viewCount": "10000",
+          "likeCount": "188"
         },
         {
           "id": "O1nFSK2C8NY",
           "title": "Así TERMINAN los JÓVENES ARROGANTES que se CREEN los DUEÑOS de la CALLE",
           "viewCount": "12000",
-          "likeCount": "224"
+          "likeCount": "227"
         },
         {
           "id": "2LzcSJXT1Oc",
           "title": "El MACHO ALFA de la CALLE: Desafió a los OFICIALES y TERMINÓ en ESPOSAS",
           "viewCount": "5900",
-          "likeCount": "172"
+          "likeCount": "174"
         },
         {
           "id": "V2anKTOBzcU",
           "title": "De un Simple Reclamo al ARRESTO Total: Madre e Hija Fuera de Control",
           "viewCount": "18000",
-          "likeCount": "323"
-        },
-        {
-          "id": "TvFfR3_zwcY",
-          "title": "Turista ARROGANTE Cree que el Dinero lo Compra Todo (¡GRAVE ERROR!)",
-          "viewCount": "47000",
-          "likeCount": "449"
+          "likeCount": "324"
         }
       ],
       "source": "youtube-public-snapshot"
@@ -126,7 +126,7 @@
       "channelId": "UCy-aPWvyq50o6sH5rtDJgFQ",
       "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_nMdYoxwG2uEsL6nBTHfVJJWktEYST0PWQEyeHFu_I0sA=s88-c-k-c0x00ffffff-no-rj-mo",
       "statistics": {
-        "viewCount": "4785570",
+        "viewCount": "4786191",
         "subscriberCount": "21900",
         "videoCount": "361"
       },
@@ -186,11 +186,11 @@
       "statistics": {
         "viewCount": "35855117",
         "subscriberCount": "93900",
-        "videoCount": "316"
+        "videoCount": "317"
       },
       "latestTitle": "¡PLAN CONTRA MADURO! MOVIMIENTO BÉLICO DESDE PANAMÁ APUNTAN A VENEZUELA",
       "recent": {
-        "views": 56200,
+        "views": 0,
         "likes": 1364,
         "sample": 6
       },
@@ -198,37 +198,37 @@
         {
           "id": "z5Gicj7xPeg",
           "title": "¡PLAN CONTRA MADURO! MOVIMIENTO BÉLICO DESDE PANAMÁ APUNTAN A VENEZUELA",
-          "viewCount": "5600",
+          "viewCount": "0",
           "likeCount": "84"
         },
         {
           "id": "M_HLs3Xt3RU",
           "title": "PERÚ Construye un NUEVO TÚNEL de 3 Millones de Soles que Conectará con la Selva Amazónica",
-          "viewCount": "18000",
+          "viewCount": "0",
           "likeCount": "426"
         },
         {
           "id": "0dsafHCOUVA",
           "title": "La ESTRATEGIA Maestra de Perú🇵🇪 que Está Causando Tensión en Chile",
-          "viewCount": "4600",
+          "viewCount": "0",
           "likeCount": "156"
         },
         {
           "id": "ZvZXbEeuS7g",
           "title": "PERÚ vs BOLIVIA | ¿Quién tiene la FUERZA AÉREA más PODEROSA? 🇵🇪 🇧🇴",
-          "viewCount": "5200",
+          "viewCount": "0",
           "likeCount": "104"
         },
         {
           "id": "woxtpeyUi3s",
           "title": "¡Impactante! Perú y El Salvador a un Paso de FIRMAR un Acuerdo que Cambiará la Región",
-          "viewCount": "17000",
+          "viewCount": "0",
           "likeCount": "446"
         },
         {
           "id": "wCBU89N0cGY",
           "title": "NUEVA MEGAOBRA VIAL en PERÚ Conectará la Vía Expresa Paseo de la República con 3 Distritos",
-          "viewCount": "5800",
+          "viewCount": "0",
           "likeCount": "148"
         }
       ],
