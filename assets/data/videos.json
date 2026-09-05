@@ -1,22 +1,22 @@
 {
-  "updatedAt": "2026-09-05T23:37:17.056Z",
+  "updatedAt": "2026-09-05T23:37:42.625Z",
   "updatedBy": "vaguacateman@gmail.com",
   "videos": [
     {
-      "uid": "example-01",
-      "code": "MDV-10",
-      "ratio": "9:16",
-      "tone": "gold",
+      "uid": "example-10",
+      "code": "MDV-01",
+      "ratio": "16:9",
+      "tone": "cyan",
       "quality": "original",
-      "previewUrl": "https://drive.google.com/file/d/17E77VP6PiXkoingGngcMrNdjlcsT8xyF/preview",
-      "thumbnailUrl": "https://drive.google.com/thumbnail?id=17E77VP6PiXkoingGngcMrNdjlcsT8xyF&sz=w640",
+      "previewUrl": "https://drive.google.com/file/d/1HVLD--ot_IPQBIWRbAw-XIAb34sPBYJl/preview",
+      "thumbnailUrl": "https://drive.google.com/file/d/1HVLD--ot_IPQBIWRbAw-XIAb34sPBYJl/view?usp=drive_link",
       "title": {
-        "en": "Tech crypto reel",
-        "es": "Reel Tecnologia Crypto"
+        "en": "Tragic accidents caught on camera",
+        "es": "Nuevo videAccidentes tragicos en camarao"
       },
       "description": {
-        "en": "Robot, text, and vertical rhythm.",
-        "es": "Robot, texto y ritmo vertical."
+        "en": "Video for accidents top portfolio example.",
+        "es": "Video sobre accidentes: un ejemplo destacado de portafolio."
       }
     },
     {
@@ -156,20 +156,20 @@
       }
     },
     {
-      "uid": "example-10",
-      "code": "MDV-01",
-      "ratio": "16:9",
-      "tone": "cyan",
+      "uid": "example-01",
+      "code": "MDV-10",
+      "ratio": "9:16",
+      "tone": "gold",
       "quality": "original",
-      "previewUrl": "https://drive.google.com/file/d/1HVLD--ot_IPQBIWRbAw-XIAb34sPBYJl/preview",
-      "thumbnailUrl": "https://drive.google.com/thumbnail?id=",
+      "previewUrl": "https://drive.google.com/file/d/17E77VP6PiXkoingGngcMrNdjlcsT8xyF/preview",
+      "thumbnailUrl": "https://drive.google.com/thumbnail?id=17E77VP6PiXkoingGngcMrNdjlcsT8xyF&sz=w640",
       "title": {
-        "en": "Tragic accidents caught on camera",
-        "es": "Nuevo videAccidentes tragicos en camarao"
+        "en": "Tech crypto reel",
+        "es": "Reel Tecnologia Crypto"
       },
       "description": {
-        "en": "Video for accidents top portfolio example.",
-        "es": "Video sobre accidentes: un ejemplo destacado de portafolio."
+        "en": "Robot, text, and vertical rhythm.",
+        "es": "Robot, texto y ritmo vertical."
       }
     }
   ]
