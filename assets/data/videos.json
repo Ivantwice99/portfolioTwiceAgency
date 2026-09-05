@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-08-05T09:28:21.334Z",
+  "updatedAt": "2026-09-05T23:24:53.598Z",
   "updatedBy": "vaguacateman@gmail.com",
   "videos": [
     {
       "uid": "example-01",
-      "code": "MDV-01",
+      "code": "MDV-10",
       "ratio": "9:16",
       "tone": "gold",
       "quality": "original",
@@ -153,6 +153,23 @@
       "description": {
         "en": "Landscape, pause, and clean ending.",
         "es": "Paisaje, pausa y final limpio."
+      }
+    },
+    {
+      "uid": "example-10",
+      "code": "MDV-01",
+      "ratio": "16:9",
+      "tone": "cyan",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/1HVLD--ot_IPQBIWRbAw-XIAb34sPBYJl/preview",
+      "thumbnailUrl": "https://drive.google.com/file/d/1HVLD--ot_IPQBIWRbAw-XIAb34sPBYJl/view?usp=drive_link",
+      "title": {
+        "en": "Tragic accidents caught on camera",
+        "es": "Nuevo videAccidentes tragicos en camarao"
+      },
+      "description": {
+        "en": "Video for accidents top portfolio example.",
+        "es": "Video sobre accidentes: un ejemplo destacado de portafolio."
       }
     }
   ]
