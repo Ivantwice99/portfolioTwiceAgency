@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-09-06T01:22:56.645Z",
+  "updatedAt": "2026-09-06T01:25:21.160Z",
   "updatedBy": "vaguacateman@gmail.com",
   "videos": [
     {
       "uid": "example-11",
       "code": "MDV-11",
-      "ratio": "9:16",
+      "ratio": "16:9",
       "tone": "rose",
       "quality": "original",
       "previewUrl": "https://drive.google.com/file/d/1GSJPYhIhJP9drGWxSd_bc90mEom2Q3HM/preview",
