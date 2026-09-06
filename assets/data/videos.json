@@ -1,7 +1,24 @@
 {
-  "updatedAt": "2026-09-06T01:19:28.013Z",
+  "updatedAt": "2026-09-06T01:22:56.645Z",
   "updatedBy": "vaguacateman@gmail.com",
   "videos": [
+    {
+      "uid": "example-11",
+      "code": "MDV-11",
+      "ratio": "9:16",
+      "tone": "rose",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/1GSJPYhIhJP9drGWxSd_bc90mEom2Q3HM/preview",
+      "thumbnailUrl": "assets/thumbs/example-11-thumb.jpg",
+      "title": {
+        "en": "Tragic accidents caught on camera v2",
+        "es": "Nuevo videAccidentes tragicos en camara v2"
+      },
+      "description": {
+        "en": "Video for accidents top portfolio example.",
+        "es": "Video sobre accidentes: un ejemplo destacado de portafolio."
+      }
+    },
     {
       "uid": "example-10",
       "code": "MDV-01",
@@ -12,7 +29,7 @@
       "thumbnailUrl": "assets/thumbs/example-10-thumb.jpg",
       "title": {
         "en": "Tragic accidents caught on camera",
-        "es": "Nuevo videAccidentes tragicos en camarao"
+        "es": "Nuevo videAccidentes tragicos en camara"
       },
       "description": {
         "en": "Video for accidents top portfolio example.",
