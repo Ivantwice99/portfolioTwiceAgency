@@ -71,9 +71,26 @@ function getDriveFileId(url = "") {
   return queryMatch ? queryMatch[1] : "";
 }
 
+function getDriveResourceKey(url = "") {
+  try {
+    return new URL(url).searchParams.get("resourcekey") || "";
+  } catch {
+    const match = String(url).match(/[?&]resourcekey=([^&]+)/i);
+    if (!match) return "";
+    try {
+      return decodeURIComponent(match[1]);
+    } catch {
+      return match[1];
+    }
+  }
+}
+
 function normalizePreviewUrl(value = "") {
   const driveId = getDriveFileId(value);
-  if (driveId) return `https://drive.google.com/file/d/${driveId}/preview`;
+  const resourceKey = getDriveResourceKey(value);
+  if (driveId) {
+    return `https://drive.google.com/file/d/${driveId}/preview${resourceKey ? `?resourcekey=${encodeURIComponent(resourceKey)}` : ""}`;
+  }
   return String(value || "").trim();
 }
 
@@ -82,7 +99,10 @@ function normalizeThumbnailUrl(value = "", previewUrl = "") {
   if (thumbnail) return thumbnail;
 
   const driveId = getDriveFileId(previewUrl);
-  return driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w640` : "";
+  const resourceKey = getDriveResourceKey(previewUrl);
+  return driveId
+    ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w640${resourceKey ? `&resourcekey=${encodeURIComponent(resourceKey)}` : ""}`
+    : "";
 }
 
 function cleanText(value, maxLength) {

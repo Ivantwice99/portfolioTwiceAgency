@@ -168,6 +168,14 @@ const translations = {
     adminFrameUnavailable: "No se pudo cargar el video desde Drive. Comprueba que cualquiera con el enlace pueda verlo.",
     adminFrameCaptureError: "No se pudo capturar este frame. Prueba con el video local.",
     adminFrameApplied: "Frame elegido. Guarda cambios para publicarlo.",
+    adminVerifyLink: "Verificar enlace",
+    adminLinkNotVerified: "Enlace sin verificar",
+    adminLinkChecking: "Verificando enlace...",
+    adminLinkReady: "Video vinculado y listo.",
+    adminLinkMissing: "Pega primero el enlace del video.",
+    adminLinkInvalid: "Pega el enlace de un archivo de video, no de una carpeta.",
+    adminLinkDenied: "El archivo existe, pero Drive no permite acceder al video. Activa Cualquier persona con el enlace → Lector.",
+    adminLinkError: "No se pudo verificar el enlace. Revisa que el archivo sea un video.",
     video01Title: "Tech reel futurista",
     video01Desc: "Robot, texto y ritmo vertical.",
     video02Title: "Intro anime gamer",
@@ -308,6 +316,14 @@ const translations = {
     adminFrameUnavailable: "Could not load the video from Drive. Check that anyone with the link can view it.",
     adminFrameCaptureError: "Could not capture this frame. Try the local video option.",
     adminFrameApplied: "Frame selected. Save changes to publish it.",
+    adminVerifyLink: "Verify link",
+    adminLinkNotVerified: "Link not verified",
+    adminLinkChecking: "Verifying link...",
+    adminLinkReady: "Video linked and ready.",
+    adminLinkMissing: "Paste the video link first.",
+    adminLinkInvalid: "Paste a video file link, not a folder link.",
+    adminLinkDenied: "The file exists, but Drive cannot access the video. Set Anyone with the link → Viewer.",
+    adminLinkError: "Could not verify the link. Check that the file is a video.",
     video01Title: "Futuristic tech reel",
     video01Desc: "Robot, text, and vertical rhythm.",
     video02Title: "Anime gamer intro",
@@ -420,6 +436,8 @@ let draggedAdminVideoIndex = null;
 let adminFrameVideoIndex = null;
 let adminFrameDataUrl = "";
 let adminFrameObjectUrl = "";
+const adminLinkStates = new Map();
+let adminLinkCheckSerial = 0;
 
 const setAvailability = (isAvailable) => {
   if (!availabilityStatus || !availabilityLabel) return;
@@ -643,15 +661,22 @@ function getLocalizedVideoText(video, field) {
 function getVideoPreviewUrl(video) {
   const rawUrl = video.previewUrl || video.driveUrl || "";
   const driveId = getDriveFileId(rawUrl);
-  if (driveId) return `https://drive.google.com/file/d/${driveId}/preview`;
+  const resourceKey = getDriveResourceKey(rawUrl);
+  if (driveId) {
+    return `https://drive.google.com/file/d/${driveId}/preview${resourceKey ? `?resourcekey=${encodeURIComponent(resourceKey)}` : ""}`;
+  }
   return rawUrl;
 }
 
 function getVideoThumbnailUrl(video) {
   if (video.thumbnailDataUrl) return video.thumbnailDataUrl;
   if (video.thumbnailUrl) return video.thumbnailUrl;
-  const driveId = getDriveFileId(video.previewUrl || video.driveUrl || "");
-  return driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w640` : "";
+  const rawUrl = video.previewUrl || video.driveUrl || "";
+  const driveId = getDriveFileId(rawUrl);
+  const resourceKey = getDriveResourceKey(rawUrl);
+  return driveId
+    ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w640${resourceKey ? `&resourcekey=${encodeURIComponent(resourceKey)}` : ""}`
+    : "";
 }
 
 function normalizeVideoRecord(video = {}, index = 0) {
@@ -1023,7 +1048,7 @@ function captureAdminFrame() {
   }
 }
 
-function openAdminFramePicker(index) {
+function openAdminFramePicker(index, verifiedSource = "") {
   const video = adminVideosDraft[index];
   if (!video || !adminFramePicker || !adminFrameVideo) return;
 
@@ -1034,7 +1059,7 @@ function openAdminFramePicker(index) {
   adminFramePicker.setAttribute("aria-hidden", "false");
   adminFrameVideo.crossOrigin = "anonymous";
   adminFrameVideo.poster = getVideoThumbnailUrl(video);
-  const source = getDriveDownloadUrl(video.previewUrl) || getVideoPreviewUrl(video);
+  const source = verifiedSource || getDriveDownloadUrl(video.previewUrl) || getVideoPreviewUrl(video);
   if (!source) {
     setAdminFrameStatus("adminFrameUnavailable", "error");
     adminFramePanel?.focus();
@@ -1046,12 +1071,105 @@ function openAdminFramePicker(index) {
   adminFramePanel?.focus();
 }
 
+function updateAdminLinkStatusElement(element, state) {
+  if (!element) return;
+  const copy = getCopy();
+  element.textContent = copy[state.key] || state.key;
+  element.classList.toggle("is-ready", state.tone === "success");
+  element.classList.toggle("is-error", state.tone === "error");
+}
+
+function setAdminLinkState(index, state) {
+  const video = adminVideosDraft[index];
+  if (!video) return;
+  adminLinkStates.set(video.uid, state);
+  updateAdminLinkStatusElement(
+    adminList?.querySelector(`[data-admin-video-index="${index}"] [data-admin-link-status]`),
+    state
+  );
+}
+
+function invalidateAdminLinkState(index) {
+  const video = adminVideosDraft[index];
+  if (!video) return;
+  adminLinkStates.delete(video.uid);
+  setAdminLinkState(index, { key: "adminLinkNotVerified", tone: "neutral" });
+}
+
+function getAdminVideoSource(video) {
+  return getDriveDownloadUrl(video.previewUrl) || getVideoPreviewUrl(video);
+}
+
+function probeAdminVideoLink(video) {
+  const rawUrl = String(video?.previewUrl || video?.driveUrl || "").trim();
+  if (!rawUrl) return Promise.resolve({ ok: false, key: "adminLinkMissing", tone: "error" });
+
+  const driveId = getDriveFileId(rawUrl);
+  const isDriveUrl = /drive\.google\.com|drive\.usercontent\.google\.com/i.test(rawUrl);
+  if (isDriveUrl && !driveId) return Promise.resolve({ ok: false, key: "adminLinkInvalid", tone: "error" });
+
+  const source = getAdminVideoSource(video);
+  if (!source || !/^https?:\/\//i.test(source)) {
+    return Promise.resolve({ ok: false, key: "adminLinkInvalid", tone: "error" });
+  }
+
+  return new Promise((resolve) => {
+    const probe = document.createElement("video");
+    let settled = false;
+    const timeout = window.setTimeout(() => finish({
+      ok: false,
+      key: isDriveUrl ? "adminLinkDenied" : "adminLinkError",
+      tone: "error"
+    }), 15000);
+
+    const finish = (result) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timeout);
+      probe.pause();
+      probe.removeAttribute("src");
+      probe.load();
+      resolve({ ...result, source });
+    };
+
+    probe.crossOrigin = "anonymous";
+    probe.preload = "metadata";
+    probe.muted = true;
+    probe.playsInline = true;
+    probe.addEventListener("loadedmetadata", () => finish({ ok: true, key: "adminLinkReady", tone: "success" }), { once: true });
+    probe.addEventListener("error", () => finish({
+      ok: false,
+      key: isDriveUrl ? "adminLinkDenied" : "adminLinkError",
+      tone: "error"
+    }), { once: true });
+    probe.src = source;
+    probe.load();
+  });
+}
+
+async function verifyAdminVideoLink(index, openPicker = false) {
+  const video = adminVideosDraft[index];
+  if (!video) return false;
+
+  const checkSerial = ++adminLinkCheckSerial;
+  setAdminLinkState(index, { key: "adminLinkChecking", tone: "neutral" });
+  const result = await probeAdminVideoLink(video);
+  if (checkSerial !== adminLinkCheckSerial || adminVideosDraft[index] !== video) return false;
+
+  setAdminLinkState(index, result);
+  if (result.ok && openPicker) openAdminFramePicker(index, result.source);
+  return result.ok;
+}
+
 function renderAdminEditor() {
   if (!adminList) return;
   const copy = getCopy();
   const totalVideos = adminVideosDraft.length;
 
-  adminList.innerHTML = adminVideosDraft.map((video, index) => `
+  adminList.innerHTML = adminVideosDraft.map((video, index) => {
+    const linkState = adminLinkStates.get(video.uid) || { key: "adminLinkNotVerified", tone: "neutral" };
+
+    return `
     <article class="admin-video-card" data-admin-video-index="${index}">
       <div class="admin-video-card-head">
         <div class="admin-video-title">
@@ -1096,6 +1214,12 @@ function renderAdminEditor() {
         <label class="admin-field-wide">
           <span>${escapeHtml(copy.adminFieldDrive)}</span>
           <input type="url" value="${escapeHtml(video.previewUrl)}" data-admin-field="previewUrl">
+          <div class="admin-link-actions">
+            <button class="admin-secondary admin-frame-button" type="button" data-admin-verify-link="${index}">
+              ${escapeHtml(copy.adminVerifyLink)}
+            </button>
+          </div>
+          <small class="admin-link-status${linkState.tone === "success" ? " is-ready" : linkState.tone === "error" ? " is-error" : ""}" data-admin-link-status>${escapeHtml(copy[linkState.key] || linkState.key)}</small>
           <small>${escapeHtml(copy.adminDriveHint)}</small>
         </label>
         <div class="admin-field-wide admin-thumbnail-field">
@@ -1135,7 +1259,8 @@ function renderAdminEditor() {
         </label>
       </div>
     </article>
-  `).join("");
+    `;
+  }).join("");
 }
 
 function updateAdminDraftField(index, field, value) {
@@ -1909,7 +2034,9 @@ adminList?.addEventListener("input", (event) => {
   const card = event.target.closest("[data-admin-video-index]");
   if (!field || !card) return;
 
-  updateAdminDraftField(Number(card.dataset.adminVideoIndex), field, event.target.value);
+  const index = Number(card.dataset.adminVideoIndex);
+  if (field === "previewUrl" || field === "code") invalidateAdminLinkState(index);
+  updateAdminDraftField(index, field, event.target.value);
 });
 
 adminList?.addEventListener("change", (event) => {
@@ -1917,14 +2044,22 @@ adminList?.addEventListener("change", (event) => {
   const card = event.target.closest("[data-admin-video-index]");
   if (!field || !card) return;
 
-  updateAdminDraftField(Number(card.dataset.adminVideoIndex), field, event.target.value);
+  const index = Number(card.dataset.adminVideoIndex);
+  if (field === "previewUrl" || field === "code") invalidateAdminLinkState(index);
+  updateAdminDraftField(index, field, event.target.value);
   renderAdminEditor();
 });
 
 adminList?.addEventListener("click", (event) => {
+  const verifyButton = event.target.closest("[data-admin-verify-link]");
+  if (verifyButton) {
+    verifyAdminVideoLink(Number(verifyButton.dataset.adminVerifyLink));
+    return;
+  }
+
   const frameButton = event.target.closest("[data-admin-pick-frame]");
   if (frameButton) {
-    openAdminFramePicker(Number(frameButton.dataset.adminPickFrame));
+    verifyAdminVideoLink(Number(frameButton.dataset.adminPickFrame), true);
     return;
   }
 
@@ -2092,9 +2227,27 @@ function getDriveFileId(url) {
   return queryMatch ? queryMatch[1] : "";
 }
 
+function getDriveResourceKey(url) {
+  if (!url) return "";
+  try {
+    return new URL(url, window.location.href).searchParams.get("resourcekey") || "";
+  } catch {
+    const match = String(url).match(/[?&]resourcekey=([^&]+)/i);
+    if (!match) return "";
+    try {
+      return decodeURIComponent(match[1]);
+    } catch {
+      return match[1];
+    }
+  }
+}
+
 function getDriveDownloadUrl(url) {
   const id = getDriveFileId(url);
-  return id ? `https://drive.usercontent.google.com/download?id=${id}&export=download` : "";
+  const resourceKey = getDriveResourceKey(url);
+  return id
+    ? `https://drive.usercontent.google.com/download?id=${id}&export=download${resourceKey ? `&resourcekey=${encodeURIComponent(resourceKey)}` : ""}`
+    : "";
 }
 
 let currentVideoFallback = "";

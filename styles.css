@@ -1779,6 +1779,25 @@ h3 {
   font-size: 0.74rem;
 }
 
+.admin-link-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.admin-link-status {
+  display: block;
+  color: var(--dim);
+}
+
+.admin-link-status.is-ready {
+  color: #35f7a1;
+}
+
+.admin-link-status.is-error {
+  color: #ff8fa3;
+}
+
 .admin-thumbnail-tools {
   display: grid;
   grid-template-columns: minmax(0, 170px) minmax(0, 1fr);
@@ -2467,6 +2486,10 @@ h3 {
 
   .admin-frame-button {
     width: 100%;
+  }
+
+  .admin-link-actions {
+    display: grid;
   }
 
   .admin-thumbnail-tools {
