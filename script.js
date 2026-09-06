@@ -2145,7 +2145,7 @@ function getDriveDownloadUrl(url) {
   const id = getDriveFileId(url);
   const resourceKey = getDriveResourceKey(url);
   return id
-    ? `https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t${resourceKey ? `&resourcekey=${encodeURIComponent(resourceKey)}` : ""}`
+    ? `/api/drive-video?id=${encodeURIComponent(id)}${resourceKey ? `&resourcekey=${encodeURIComponent(resourceKey)}` : ""}`
     : "";
 }
 
