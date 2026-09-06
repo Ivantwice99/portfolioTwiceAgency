@@ -77,7 +77,8 @@ module.exports = async function handler(request, response) {
     response.status(upstream.status);
     response.setHeader("Content-Type", upstream.headers.get("content-type") || "video/mp4");
     response.setHeader("Accept-Ranges", "bytes");
-    response.setHeader("Cache-Control", "private, no-store");
+    response.setHeader("Cache-Control", "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800");
+    response.setHeader("Vary", "Range");
 
     for (const name of ["content-length", "content-range", "etag", "last-modified"]) {
       const value = upstream.headers.get(name);

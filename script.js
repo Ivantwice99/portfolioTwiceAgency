@@ -1785,7 +1785,20 @@ clientRefresh?.addEventListener("click", () => {
 videoGrid?.addEventListener("pointerdown", (event) => {
   const button = event.target.closest("[data-open-video]");
   if (!button || (event.button && event.button !== 0)) return;
+  prewarmVideoPreview(button.dataset.videoPreview || "");
   playClick(3);
+});
+
+videoGrid?.addEventListener("pointerover", (event) => {
+  const button = event.target.closest("[data-open-video]");
+  if (!button) return;
+  prewarmVideoPreview(button.dataset.videoPreview || "");
+}, { passive: true });
+
+videoGrid?.addEventListener("focusin", (event) => {
+  const button = event.target.closest("[data-open-video]");
+  if (!button) return;
+  prewarmVideoPreview(button.dataset.videoPreview || "");
 });
 
 videoGrid?.addEventListener("click", (event) => {
@@ -2114,6 +2127,10 @@ function withAutoplay(url) {
   return `${url}${url.includes("?") ? "&" : "?"}autoplay=1`;
 }
 
+function isDirectVideoUrl(url = "") {
+  return /\.(?:mp4|webm|ogg)(?:[?#]|$)/i.test(String(url));
+}
+
 function getDriveFileId(url) {
   if (!url) return "";
   const pathMatch = url.match(/\/d\/([^/]+)/);
@@ -2151,6 +2168,7 @@ function getDriveDownloadUrl(url) {
 
 let currentVideoFallback = "";
 let shouldRestoreAmbientAfterVideo = false;
+const prefetchedVideoPreviews = new Set();
 
 const pauseAmbientForVideo = () => {
   shouldRestoreAmbientAfterVideo = ambientEnabled && Boolean(ambientAudio && !ambientAudio.paused);
@@ -2207,10 +2225,22 @@ const showEmbedVideo = (previewUrl) => {
   window.requestAnimationFrame(syncEmbedScale);
 };
 
+const prewarmVideoPreview = (previewUrl) => {
+  if (!previewUrl || prefetchedVideoPreviews.has(previewUrl)) return;
+  prefetchedVideoPreviews.add(previewUrl);
+
+  const link = document.createElement("link");
+  link.rel = "prefetch";
+  link.as = "document";
+  link.href = withAutoplay(previewUrl);
+  document.head.append(link);
+};
+
 const openVideo = (title, previewUrl, ratio) => {
   if (!videoModal || !modalPanel) return;
   const copy = translations[currentLanguage] || translations.en;
-  const sourceUrl = getDriveDownloadUrl(previewUrl);
+  const driveId = getDriveFileId(previewUrl);
+  const sourceUrl = !driveId && isDirectVideoUrl(previewUrl) ? previewUrl : "";
 
   pauseAmbientForVideo();
 
@@ -2225,8 +2255,11 @@ const openVideo = (title, previewUrl, ratio) => {
     videoFrame.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
   }
 
-  if (videoPlayer && sourceUrl) {
+  if (driveId && previewUrl) {
+    showEmbedVideo(previewUrl);
+  } else if (videoPlayer && sourceUrl) {
     currentVideoFallback = previewUrl;
+    videoPlayer.preload = "auto";
     videoPlayer.title = copy.videoPreviewLabel;
     videoPlayer.src = sourceUrl;
     modalScreen?.classList.add("has-video", "has-native");
