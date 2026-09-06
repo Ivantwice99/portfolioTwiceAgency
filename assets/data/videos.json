@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-05T23:38:16.302Z",
+  "updatedAt": "2026-09-06T01:10:05.867Z",
   "updatedBy": "vaguacateman@gmail.com",
   "videos": [
     {
@@ -9,7 +9,7 @@
       "tone": "cyan",
       "quality": "original",
       "previewUrl": "https://drive.google.com/file/d/1HVLD--ot_IPQBIWRbAw-XIAb34sPBYJl/preview",
-      "thumbnailUrl": "https://drive.google.com/thumbnail?id=1HVLD--ot_IPQBIWRbAw-XIAb34sPBYJl&sz=w640",
+      "thumbnailUrl": "assets/thumbs/example-10-thumb.jpg",
       "title": {
         "en": "Tragic accidents caught on camera",
         "es": "Nuevo videAccidentes tragicos en camarao"
