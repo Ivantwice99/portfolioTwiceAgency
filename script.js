@@ -154,6 +154,7 @@ const translations = {
     adminDragVideo: "Arrastrar para ordenar",
     adminOrderUpdated: "Orden actualizado. Guarda cambios para publicarlo.",
     adminDriveHint: "Pega un enlace de Google Drive o /preview. Se usara al guardar el video.",
+    adminFolderLinkHint: "Este es un enlace de carpeta. Pega el enlace del archivo de video individual.",
     adminChooseFrame: "Elegir frame",
     adminFramePickerKicker: "Miniatura",
     adminFramePickerTitle: "Elegir miniatura",
@@ -294,6 +295,7 @@ const translations = {
     adminDragVideo: "Drag to reorder",
     adminOrderUpdated: "Order updated. Save changes to publish it.",
     adminDriveHint: "Paste a Google Drive link or /preview. It will be used when you save the video.",
+    adminFolderLinkHint: "This is a folder link. Paste the link to the individual video file.",
     adminChooseFrame: "Choose frame",
     adminFramePickerKicker: "Thumbnail",
     adminFramePickerTitle: "Choose thumbnail",
@@ -650,9 +652,18 @@ function getVideoPreviewUrl(video) {
   return rawUrl;
 }
 
+function isUsableThumbnailUrl(value = "") {
+  const thumbnail = String(value || "").trim();
+  if (!thumbnail || thumbnail.startsWith("data:")) return false;
+  if (/^https?:\/\//i.test(thumbnail)) {
+    return !/drive\.google\.com\/thumbnail\?id=(?:&|$)/i.test(thumbnail);
+  }
+  return /^(?:assets\/|\/|blob:)/i.test(thumbnail);
+}
+
 function getVideoThumbnailUrl(video) {
   if (video.thumbnailDataUrl) return video.thumbnailDataUrl;
-  if (video.thumbnailUrl) return video.thumbnailUrl;
+  if (isUsableThumbnailUrl(video.thumbnailUrl)) return String(video.thumbnailUrl).trim();
   const rawUrl = video.previewUrl || video.driveUrl || "";
   const driveId = getDriveFileId(rawUrl);
   const resourceKey = getDriveResourceKey(rawUrl);
@@ -667,7 +678,7 @@ function normalizeVideoRecord(video = {}, index = 0) {
   const thumbnailDataUrl = typeof video.thumbnailDataUrl === "string" && video.thumbnailDataUrl.startsWith("data:image/")
     ? video.thumbnailDataUrl
     : "";
-  const storedThumbnailUrl = String(video.thumbnailUrl || "").startsWith("data:") ? "" : String(video.thumbnailUrl || "").trim();
+  const storedThumbnailUrl = isUsableThumbnailUrl(video.thumbnailUrl) ? String(video.thumbnailUrl).trim() : "";
   const title = typeof video.title === "object"
     ? video.title
     : { en: String(video.title || ""), es: String(video.title || "") };
@@ -1041,6 +1052,11 @@ function openAdminFramePicker(index) {
   adminFramePicker.setAttribute("aria-hidden", "false");
   adminFrameVideo.crossOrigin = "anonymous";
   adminFrameVideo.poster = getVideoThumbnailUrl(video);
+  if (isDriveFolderUrl(video.previewUrl)) {
+    setAdminFrameStatus("adminFolderLinkHint", "error");
+    adminFramePanel?.focus();
+    return;
+  }
   const source = getDriveDownloadUrl(video.previewUrl) || getVideoPreviewUrl(video);
   if (!source) {
     setAdminFrameStatus("adminFrameUnavailable", "error");
@@ -1059,6 +1075,8 @@ function renderAdminEditor() {
   const totalVideos = adminVideosDraft.length;
 
   adminList.innerHTML = adminVideosDraft.map((video, index) => {
+    const isFolderLink = /drive\.google\.com\/drive\/[^/]*folders\//i.test(String(video.previewUrl || ""));
+
     return `
     <article class="admin-video-card" data-admin-video-index="${index}">
       <div class="admin-video-card-head">
@@ -1104,6 +1122,7 @@ function renderAdminEditor() {
         <label class="admin-field-wide">
           <span>${escapeHtml(copy.adminFieldDrive)}</span>
           <input type="url" value="${escapeHtml(video.previewUrl)}" data-admin-field="previewUrl">
+          ${isFolderLink ? `<small class="admin-link-status is-error">${escapeHtml(copy.adminFolderLinkHint)}</small>` : ""}
           <small>${escapeHtml(copy.adminDriveHint)}</small>
         </label>
         <div class="admin-field-wide admin-thumbnail-field">
@@ -2101,6 +2120,10 @@ function getDriveFileId(url) {
   if (pathMatch) return pathMatch[1];
   const queryMatch = url.match(/[?&]id=([^&]+)/);
   return queryMatch ? queryMatch[1] : "";
+}
+
+function isDriveFolderUrl(url = "") {
+  return /drive\.google\.com\/drive\/[^/]*folders\//i.test(String(url));
 }
 
 function getDriveResourceKey(url) {

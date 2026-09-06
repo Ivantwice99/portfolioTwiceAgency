@@ -71,6 +71,10 @@ function getDriveFileId(url = "") {
   return queryMatch ? queryMatch[1] : "";
 }
 
+function isDriveFolderUrl(url = "") {
+  return /drive\.google\.com\/drive\/[^/]*folders\//i.test(String(url));
+}
+
 function getDriveResourceKey(url = "") {
   try {
     return new URL(url).searchParams.get("resourcekey") || "";
@@ -86,6 +90,7 @@ function getDriveResourceKey(url = "") {
 }
 
 function normalizePreviewUrl(value = "") {
+  if (isDriveFolderUrl(value)) return "";
   const driveId = getDriveFileId(value);
   const resourceKey = getDriveResourceKey(value);
   if (driveId) {
@@ -96,7 +101,7 @@ function normalizePreviewUrl(value = "") {
 
 function normalizeThumbnailUrl(value = "", previewUrl = "") {
   const thumbnail = String(value || "").trim();
-  if (thumbnail) return thumbnail;
+  if (thumbnail && !/drive\.google\.com\/thumbnail\?id=(?:&|$)/i.test(thumbnail)) return thumbnail;
 
   const driveId = getDriveFileId(previewUrl);
   const resourceKey = getDriveResourceKey(previewUrl);
@@ -161,6 +166,9 @@ function validateVideos(rawVideos) {
 
   const seenCodes = new Set();
   return rawVideos.map((video, index) => {
+    if (isDriveFolderUrl(video?.previewUrl || video?.driveUrl || "")) {
+      throw new Error("folder-preview-link");
+    }
     const normalized = normalizeVideo(video, index);
     if (!normalized.code) throw new Error("missing-video-id");
     if (!normalized.previewUrl) throw new Error(`missing-preview-url-${normalized.code}`);
@@ -290,7 +298,9 @@ module.exports = async function handler(request, response) {
       updatedAt: saved.data.updatedAt
     });
   } catch (error) {
-    const message = error.message === "admin-only"
+    const message = error.message === "folder-preview-link"
+      ? "Paste the link to the individual video file, not the Drive folder."
+      : error.message === "admin-only"
       ? "Only the admin can edit this page."
       : error.message;
     const status = ["admin-only", "invalid-audience", "invalid-signature", "expired-token", "email-not-verified"].includes(error.message)
