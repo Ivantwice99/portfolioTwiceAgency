@@ -24,6 +24,16 @@ const adminAdd = document.querySelector("[data-admin-add]");
 const adminSave = document.querySelector("[data-admin-save]");
 const adminLogout = document.querySelector("[data-admin-logout]");
 const adminCloseButtons = document.querySelectorAll("[data-admin-close]");
+const adminFramePicker = document.querySelector("[data-admin-frame-picker]");
+const adminFramePanel = adminFramePicker?.querySelector(".admin-frame-panel");
+const adminFrameVideo = document.querySelector("[data-admin-frame-video]");
+const adminFrameCanvas = document.querySelector("[data-admin-frame-canvas]");
+const adminFrameRange = document.querySelector("[data-admin-frame-range]");
+const adminFrameTime = document.querySelector("[data-admin-frame-time]");
+const adminFrameFile = document.querySelector("[data-admin-frame-file]");
+const adminFrameApply = document.querySelector("[data-admin-frame-apply]");
+const adminFrameStatus = document.querySelector("[data-admin-frame-status]");
+const adminFrameCloseButtons = document.querySelectorAll("[data-admin-frame-close], [data-admin-frame-cancel]");
 const closeVideoButtons = document.querySelectorAll("[data-close-video]");
 const contactForm = document.querySelector("[data-contact-form]");
 const contactLinks = document.querySelectorAll("[data-contact-action]");
@@ -144,6 +154,20 @@ const translations = {
     adminDragVideo: "Arrastrar para ordenar",
     adminOrderUpdated: "Orden actualizado. Guarda cambios para publicarlo.",
     adminDriveHint: "Pega un enlace de Google Drive o /preview. El video debe estar visible para quien tenga el enlace.",
+    adminChooseFrame: "Elegir frame",
+    adminFramePickerKicker: "Miniatura",
+    adminFramePickerTitle: "Elegir miniatura",
+    adminFramePickerHint: "Mueve la barra para encontrar el frame ideal del video.",
+    adminFrameCurrent: "Frame actual",
+    adminFrameUse: "Usar este frame",
+    adminFrameCancel: "Cancelar",
+    adminFrameLocal: "Cargar video local",
+    adminFrameNoPreview: "Sin miniatura seleccionada",
+    adminFrameLoading: "Cargando video...",
+    adminFrameReady: "Mueve la barra para elegir un frame.",
+    adminFrameUnavailable: "No se pudo cargar el video desde Drive. Comprueba que cualquiera con el enlace pueda verlo.",
+    adminFrameCaptureError: "No se pudo capturar este frame. Prueba con el video local.",
+    adminFrameApplied: "Frame elegido. Guarda cambios para publicarlo.",
     video01Title: "Tech reel futurista",
     video01Desc: "Robot, texto y ritmo vertical.",
     video02Title: "Intro anime gamer",
@@ -270,6 +294,20 @@ const translations = {
     adminDragVideo: "Drag to reorder",
     adminOrderUpdated: "Order updated. Save changes to publish it.",
     adminDriveHint: "Paste a Google Drive link or /preview. The video must be visible to anyone with the link.",
+    adminChooseFrame: "Choose frame",
+    adminFramePickerKicker: "Thumbnail",
+    adminFramePickerTitle: "Choose thumbnail",
+    adminFramePickerHint: "Move the bar to find the right frame in the video.",
+    adminFrameCurrent: "Current frame",
+    adminFrameUse: "Use this frame",
+    adminFrameCancel: "Cancel",
+    adminFrameLocal: "Load local video",
+    adminFrameNoPreview: "No thumbnail selected",
+    adminFrameLoading: "Loading video...",
+    adminFrameReady: "Move the bar to choose a frame.",
+    adminFrameUnavailable: "Could not load the video from Drive. Check that anyone with the link can view it.",
+    adminFrameCaptureError: "Could not capture this frame. Try the local video option.",
+    adminFrameApplied: "Frame selected. Save changes to publish it.",
     video01Title: "Futuristic tech reel",
     video01Desc: "Robot, text, and vertical rhythm.",
     video02Title: "Anime gamer intro",
@@ -379,6 +417,9 @@ let adminProfile = null;
 let adminConfigRequested = false;
 let adminGoogleInitialized = false;
 let draggedAdminVideoIndex = null;
+let adminFrameVideoIndex = null;
+let adminFrameDataUrl = "";
+let adminFrameObjectUrl = "";
 
 const setAvailability = (isAvailable) => {
   if (!availabilityStatus || !availabilityLabel) return;
@@ -607,6 +648,7 @@ function getVideoPreviewUrl(video) {
 }
 
 function getVideoThumbnailUrl(video) {
+  if (video.thumbnailDataUrl) return video.thumbnailDataUrl;
   if (video.thumbnailUrl) return video.thumbnailUrl;
   const driveId = getDriveFileId(video.previewUrl || video.driveUrl || "");
   return driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w640` : "";
@@ -615,6 +657,10 @@ function getVideoThumbnailUrl(video) {
 function normalizeVideoRecord(video = {}, index = 0) {
   const code = String(video.code || video.id || `MDV-${String(index + 1).padStart(2, "0")}`).trim();
   const uid = String(video.uid || code || `video-${index + 1}`).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const thumbnailDataUrl = typeof video.thumbnailDataUrl === "string" && video.thumbnailDataUrl.startsWith("data:image/")
+    ? video.thumbnailDataUrl
+    : "";
+  const storedThumbnailUrl = String(video.thumbnailUrl || "").startsWith("data:") ? "" : String(video.thumbnailUrl || "").trim();
   const title = typeof video.title === "object"
     ? video.title
     : { en: String(video.title || ""), es: String(video.title || "") };
@@ -629,7 +675,8 @@ function normalizeVideoRecord(video = {}, index = 0) {
     tone: ["gold", "cyan", "rose", "silver"].includes(video.tone) ? video.tone : ["gold", "cyan", "rose", "silver"][index % 4],
     quality: video.quality || "original",
     previewUrl: getVideoPreviewUrl(video),
-    thumbnailUrl: getVideoThumbnailUrl(video),
+    thumbnailUrl: storedThumbnailUrl || getVideoThumbnailUrl({ ...video, thumbnailDataUrl: "", thumbnailUrl: "" }),
+    thumbnailDataUrl,
     title: {
       en: String(title.en || title.es || code),
       es: String(title.es || title.en || code)
@@ -678,7 +725,7 @@ async function loadPortfolioVideos() {
   setVideoStatus("loadingVideos");
 
   try {
-    const payload = await fetchJson(`${videoDataUrl}?v=admin-video-editor-v1`);
+    const payload = await fetchJson(`${videoDataUrl}?v=admin-thumbnail-v1`);
     portfolioVideos = (payload.videos || []).map(normalizeVideoRecord);
     renderVideoTiles();
   } catch (error) {
@@ -821,6 +868,7 @@ async function openAdminModal() {
 
 function closeAdminModal() {
   if (!adminModal) return;
+  closeAdminFramePicker();
   adminModal.classList.remove("is-open");
   adminModal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
@@ -905,6 +953,99 @@ function adminGripIcon() {
   `;
 }
 
+function setAdminFrameStatus(key = "", tone = "neutral") {
+  if (!adminFrameStatus) return;
+  const copy = getCopy();
+  adminFrameStatus.textContent = key ? (copy[key] || key) : "";
+  adminFrameStatus.classList.toggle("is-success", tone === "success");
+  adminFrameStatus.classList.toggle("is-error", tone === "error");
+}
+
+function formatAdminFrameTime(value) {
+  const seconds = Math.max(0, Math.floor(Number(value) || 0));
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+function clearAdminFrameSource() {
+  if (adminFrameObjectUrl) {
+    URL.revokeObjectURL(adminFrameObjectUrl);
+    adminFrameObjectUrl = "";
+  }
+
+  if (adminFrameVideo) {
+    adminFrameVideo.pause();
+    adminFrameVideo.removeAttribute("src");
+    adminFrameVideo.load();
+  }
+}
+
+function closeAdminFramePicker() {
+  if (!adminFramePicker) return;
+  clearAdminFrameSource();
+  adminFrameVideoIndex = null;
+  adminFrameDataUrl = "";
+  adminFramePicker.classList.remove("is-open");
+  adminFramePicker.setAttribute("aria-hidden", "true");
+  adminFramePicker.hidden = true;
+  if (adminFrameRange) {
+    adminFrameRange.value = "0";
+    adminFrameRange.max = "0";
+    adminFrameRange.disabled = true;
+  }
+  if (adminFrameTime) adminFrameTime.textContent = formatAdminFrameTime(0);
+  if (adminFrameApply) adminFrameApply.disabled = true;
+  if (adminFrameFile) adminFrameFile.value = "";
+  setAdminFrameStatus("");
+}
+
+function captureAdminFrame() {
+  if (!adminFrameVideo || !adminFrameCanvas || adminFrameVideoIndex === null) return;
+  if (!adminFrameVideo.videoWidth || !adminFrameVideo.videoHeight) return;
+
+  const maxWidth = 1280;
+  const scale = Math.min(1, maxWidth / adminFrameVideo.videoWidth);
+  adminFrameCanvas.width = Math.max(1, Math.round(adminFrameVideo.videoWidth * scale));
+  adminFrameCanvas.height = Math.max(1, Math.round(adminFrameVideo.videoHeight * scale));
+
+  const context = adminFrameCanvas.getContext("2d");
+  if (!context) return;
+
+  try {
+    context.drawImage(adminFrameVideo, 0, 0, adminFrameCanvas.width, adminFrameCanvas.height);
+    adminFrameDataUrl = adminFrameCanvas.toDataURL("image/jpeg", 0.86);
+    if (adminFrameApply) adminFrameApply.disabled = false;
+    setAdminFrameStatus("");
+  } catch {
+    adminFrameDataUrl = "";
+    if (adminFrameApply) adminFrameApply.disabled = true;
+    setAdminFrameStatus("adminFrameCaptureError", "error");
+  }
+}
+
+function openAdminFramePicker(index) {
+  const video = adminVideosDraft[index];
+  if (!video || !adminFramePicker || !adminFrameVideo) return;
+
+  closeAdminFramePicker();
+  adminFrameVideoIndex = index;
+  adminFramePicker.hidden = false;
+  adminFramePicker.classList.add("is-open");
+  adminFramePicker.setAttribute("aria-hidden", "false");
+  adminFrameVideo.crossOrigin = "anonymous";
+  adminFrameVideo.poster = getVideoThumbnailUrl(video);
+  const source = getDriveDownloadUrl(video.previewUrl) || getVideoPreviewUrl(video);
+  if (!source) {
+    setAdminFrameStatus("adminFrameUnavailable", "error");
+    adminFramePanel?.focus();
+    return;
+  }
+  adminFrameVideo.src = source;
+  adminFrameVideo.load();
+  setAdminFrameStatus("adminFrameLoading");
+  adminFramePanel?.focus();
+}
+
 function renderAdminEditor() {
   if (!adminList) return;
   const copy = getCopy();
@@ -957,10 +1098,25 @@ function renderAdminEditor() {
           <input type="url" value="${escapeHtml(video.previewUrl)}" data-admin-field="previewUrl">
           <small>${escapeHtml(copy.adminDriveHint)}</small>
         </label>
-        <label class="admin-field-wide">
-          <span>${escapeHtml(copy.adminFieldThumb)}</span>
-          <input type="text" value="${escapeHtml(video.thumbnailUrl)}" data-admin-field="thumbnailUrl">
-        </label>
+        <div class="admin-field-wide admin-thumbnail-field">
+          <div class="admin-field-label-row">
+            <span class="admin-field-label">${escapeHtml(copy.adminFieldThumb)}</span>
+            <button class="admin-secondary admin-frame-button" type="button" data-admin-pick-frame="${index}">
+              ${escapeHtml(copy.adminChooseFrame)}
+            </button>
+          </div>
+          <div class="admin-thumbnail-tools">
+            <div class="admin-thumbnail-preview">
+              ${getVideoThumbnailUrl(video)
+                ? `<img src="${escapeHtml(getVideoThumbnailUrl(video))}" alt="">`
+                : `<span>${escapeHtml(copy.adminFrameNoPreview)}</span>`}
+            </div>
+            <div class="admin-thumbnail-input">
+              <input type="text" value="${escapeHtml(video.thumbnailUrl)}" data-admin-field="thumbnailUrl">
+              <small>${escapeHtml(copy.adminFramePickerHint)}</small>
+            </div>
+          </div>
+        </div>
         <label>
           <span>${escapeHtml(copy.adminFieldTitleEn)}</span>
           <input type="text" value="${escapeHtml(video.title.en)}" data-admin-field="title.en">
@@ -1654,6 +1810,83 @@ adminCloseButtons.forEach((button) => {
   });
 });
 
+adminFrameCloseButtons.forEach((button) => {
+  button.addEventListener("click", (event) => {
+    playOnKeyboardClick(event, 1);
+    closeAdminFramePicker();
+  });
+});
+
+adminFrameVideo?.addEventListener("loadedmetadata", () => {
+  if (adminFrameVideoIndex === null) return;
+
+  const duration = Number.isFinite(adminFrameVideo.duration) ? adminFrameVideo.duration : 0;
+  if (adminFrameRange) {
+    adminFrameRange.max = String(duration);
+    adminFrameRange.value = "0";
+    adminFrameRange.disabled = duration <= 0;
+  }
+  if (adminFrameTime) adminFrameTime.textContent = formatAdminFrameTime(0);
+  setAdminFrameStatus("adminFrameReady");
+});
+
+adminFrameVideo?.addEventListener("loadeddata", () => {
+  captureAdminFrame();
+});
+
+adminFrameVideo?.addEventListener("seeked", () => {
+  if (adminFrameTime) adminFrameTime.textContent = formatAdminFrameTime(adminFrameVideo.currentTime);
+  captureAdminFrame();
+});
+
+adminFrameVideo?.addEventListener("timeupdate", () => {
+  if (adminFrameVideoIndex === null) return;
+  if (adminFrameRange && !adminFrameRange.matches(":active")) {
+    adminFrameRange.value = String(adminFrameVideo.currentTime || 0);
+  }
+  if (adminFrameTime) adminFrameTime.textContent = formatAdminFrameTime(adminFrameVideo.currentTime);
+});
+
+adminFrameVideo?.addEventListener("error", () => {
+  if (adminFrameVideoIndex === null) return;
+  if (adminFrameApply) adminFrameApply.disabled = true;
+  setAdminFrameStatus("adminFrameUnavailable", "error");
+});
+
+adminFrameRange?.addEventListener("input", () => {
+  const time = Number(adminFrameRange.value) || 0;
+  if (adminFrameTime) adminFrameTime.textContent = formatAdminFrameTime(time);
+  if (adminFrameVideo && adminFrameVideo.readyState >= 1) {
+    adminFrameVideo.currentTime = time;
+  }
+});
+
+adminFrameFile?.addEventListener("change", () => {
+  const file = adminFrameFile.files?.[0];
+  if (!file || !adminFrameVideo) return;
+
+  if (adminFrameObjectUrl) URL.revokeObjectURL(adminFrameObjectUrl);
+  adminFrameObjectUrl = URL.createObjectURL(file);
+  adminFrameVideo.crossOrigin = "";
+  adminFrameVideo.src = adminFrameObjectUrl;
+  adminFrameVideo.load();
+  setAdminFrameStatus("adminFrameLoading");
+});
+
+adminFrameApply?.addEventListener("click", () => {
+  if (adminFrameVideoIndex === null || !adminFrameDataUrl) return;
+
+  const index = adminFrameVideoIndex;
+  const video = adminVideosDraft[index];
+  if (!video) return;
+
+  video.thumbnailDataUrl = adminFrameDataUrl;
+  adminVideosDraft[index] = normalizeVideoRecord(video, index);
+  renderAdminEditor();
+  closeAdminFramePicker();
+  setAdminStatus("adminFrameApplied", "success");
+});
+
 adminAdd?.addEventListener("click", () => {
   adminVideosDraft.push(createBlankVideo());
   renderAdminEditor();
@@ -1689,6 +1922,12 @@ adminList?.addEventListener("change", (event) => {
 });
 
 adminList?.addEventListener("click", (event) => {
+  const frameButton = event.target.closest("[data-admin-pick-frame]");
+  if (frameButton) {
+    openAdminFramePicker(Number(frameButton.dataset.adminPickFrame));
+    return;
+  }
+
   const moveButton = event.target.closest("[data-admin-move]");
   if (moveButton) {
     const fromIndex = Number(moveButton.dataset.adminMove);
@@ -1994,6 +2233,10 @@ closeVideoButtons.forEach((button) => {
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
+    if (adminFramePicker?.classList.contains("is-open")) {
+      closeAdminFramePicker();
+      return;
+    }
     closeVideo();
     closeAdminModal();
   }

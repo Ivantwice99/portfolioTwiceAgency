@@ -23,7 +23,7 @@
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="preload" href="assets/audio/final-fantasy-menu-click.mp3" as="audio">
     <link rel="preload" href="assets/audio/ambient-loop.mp3" as="audio" type="audio/mpeg">
-    <link rel="stylesheet" href="styles.css?v=admin-reorder-v1">
+    <link rel="stylesheet" href="styles.css?v=admin-thumbnail-v1">
   </head>
   <body>
     <div class="scene" aria-hidden="true">
@@ -303,6 +303,44 @@
           <div class="admin-video-list" data-admin-list></div>
         </div>
 
+        <div class="admin-frame-picker" data-admin-frame-picker aria-hidden="true" hidden>
+          <div class="admin-frame-backdrop" data-admin-frame-close></div>
+          <section class="admin-frame-panel" role="dialog" aria-modal="true" aria-label="Choose thumbnail frame" tabindex="-1">
+            <div class="admin-frame-head">
+              <div>
+                <p class="kicker" data-i18n="adminFramePickerKicker">Thumbnail frame</p>
+                <h3 data-i18n="adminFramePickerTitle">Choose thumbnail</h3>
+                <p data-i18n="adminFramePickerHint">Move the bar to find the right frame.</p>
+              </div>
+              <button class="modal-close" type="button" data-admin-frame-close aria-label="Close">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M18 6 6 18M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="admin-frame-stage">
+              <video data-admin-frame-video controls playsinline preload="metadata" crossorigin="anonymous"></video>
+              <canvas data-admin-frame-canvas hidden></canvas>
+            </div>
+            <div class="admin-frame-controls">
+              <label class="admin-frame-range">
+                <span data-i18n="adminFrameCurrent">Current frame</span>
+                <input type="range" min="0" max="0" step="0.01" value="0" data-admin-frame-range disabled>
+                <output data-admin-frame-time>0:00</output>
+              </label>
+              <div class="admin-frame-actions">
+                <label class="admin-secondary admin-frame-file-button">
+                  <span data-i18n="adminFrameLocal">Load local video</span>
+                  <input type="file" accept="video/*" data-admin-frame-file>
+                </label>
+                <button class="admin-secondary" type="button" data-admin-frame-cancel data-i18n="adminFrameCancel">Cancel</button>
+                <button class="admin-save" type="button" data-admin-frame-apply data-i18n="adminFrameUse" disabled>Use this frame</button>
+              </div>
+            </div>
+            <p class="admin-frame-status" data-admin-frame-status role="status" aria-live="polite"></p>
+          </section>
+        </div>
+
         <p class="admin-status" data-admin-status role="status" aria-live="polite"></p>
       </section>
     </div>
@@ -314,6 +352,6 @@
     </div>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="script.js?v=admin-reorder-v1"></script>
+    <script src="script.js?v=admin-thumbnail-v1"></script>
   </body>
 </html>

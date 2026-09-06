@@ -1759,6 +1759,202 @@ h3 {
   grid-column: span 3;
 }
 
+.admin-field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.admin-field-label {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.admin-frame-button {
+  min-height: 34px;
+  padding: 0.38rem 0.58rem;
+  font-size: 0.74rem;
+}
+
+.admin-thumbnail-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 170px) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0.65rem;
+}
+
+.admin-thumbnail-preview {
+  display: grid;
+  min-height: 96px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(103, 232, 249, 0.16);
+  border-radius: var(--radius);
+  color: var(--dim);
+  background: rgba(1, 4, 10, 0.68);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.admin-thumbnail-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 96px;
+  object-fit: cover;
+}
+
+.admin-thumbnail-input {
+  display: grid;
+  align-content: center;
+  gap: 0.25rem;
+}
+
+.admin-frame-picker {
+  position: fixed;
+  inset: 0;
+  z-index: 75;
+  display: none;
+  place-items: center;
+  padding: 1rem;
+}
+
+.admin-frame-picker.is-open {
+  display: grid;
+}
+
+.admin-frame-picker[hidden] {
+  display: none;
+}
+
+.admin-frame-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(1, 3, 8, 0.9);
+}
+
+.admin-frame-panel {
+  position: relative;
+  display: grid;
+  width: min(94vw, 900px);
+  max-height: min(92svh, 860px);
+  gap: 0.85rem;
+  overflow: auto;
+  padding: 1.15rem;
+  border: 1px solid rgba(226, 240, 255, 0.22);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(7, 11, 22, 0.98), rgba(4, 7, 14, 0.99)),
+    var(--glass-strong);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.72), inset 0 0 38px rgba(103, 232, 249, 0.04);
+}
+
+.admin-frame-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-right: 3rem;
+}
+
+.admin-frame-head h3 {
+  margin: 0.15rem 0 0;
+  color: var(--ink);
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+
+.admin-frame-head p:last-child {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+}
+
+.admin-frame-stage {
+  display: grid;
+  min-height: 220px;
+  max-height: 58svh;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(103, 232, 249, 0.18);
+  border-radius: var(--radius);
+  background: #02040a;
+}
+
+.admin-frame-stage video {
+  display: block;
+  width: 100%;
+  max-height: 58svh;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #02040a;
+}
+
+.admin-frame-controls {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.admin-frame-range {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.admin-frame-range input {
+  width: 100%;
+  accent-color: var(--cyan);
+}
+
+.admin-frame-range output {
+  min-width: 3.2rem;
+  color: var(--gold);
+  text-align: right;
+}
+
+.admin-frame-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.admin-frame-file-button {
+  display: inline-grid;
+  place-items: center;
+}
+
+.admin-frame-file-button input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.admin-frame-status {
+  min-height: 22px;
+  margin: 0;
+  color: var(--gold);
+  font-size: 0.88rem;
+  font-weight: 850;
+}
+
+.admin-frame-status.is-error {
+  color: #ff6b7f;
+}
+
+.admin-frame-status.is-success {
+  color: #35f7a1;
+}
+
 .admin-status {
   min-height: 24px;
   margin: 0.9rem 0 0;
@@ -2262,6 +2458,60 @@ h3 {
 
   .admin-field-wide {
     grid-column: auto;
+  }
+
+  .admin-field-label-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-frame-button {
+    width: 100%;
+  }
+
+  .admin-thumbnail-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-thumbnail-preview {
+    min-height: 150px;
+  }
+
+  .admin-thumbnail-preview img {
+    min-height: 150px;
+  }
+
+  .admin-frame-picker {
+    padding: 0.5rem;
+  }
+
+  .admin-frame-panel {
+    width: 100%;
+    max-height: calc(100svh - 1rem);
+    padding: 0.8rem;
+  }
+
+  .admin-frame-stage,
+  .admin-frame-stage video {
+    max-height: 48svh;
+  }
+
+  .admin-frame-range {
+    grid-template-columns: 1fr auto;
+  }
+
+  .admin-frame-range input {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .admin-frame-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .admin-frame-actions > * {
+    width: 100%;
   }
 
   .payment-grid-three {

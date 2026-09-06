@@ -5,6 +5,7 @@ const DEFAULT_REPO = "Ivantwice99/portfolioTwiceAgency";
 const DEFAULT_BRANCH = "main";
 const VIDEO_DATA_PATH = "assets/data/videos.json";
 const GOOGLE_JWKS_URL = "https://www.googleapis.com/oauth2/v3/certs";
+const MAX_THUMBNAIL_BYTES = 6 * 1024 * 1024;
 
 function sendJson(response, status, payload) {
   response.setHeader("Cache-Control", "no-store");
@@ -88,6 +89,23 @@ function cleanText(value, maxLength) {
   return String(value || "").trim().slice(0, maxLength);
 }
 
+function decodeThumbnailDataUrl(value) {
+  const match = String(value || "").match(/^data:(image\/(?:jpeg|jpg|png|webp));base64,([A-Za-z0-9+/=]+)$/i);
+  if (!match) throw new Error("invalid-thumbnail");
+
+  const buffer = Buffer.from(match[2], "base64");
+  if (!buffer.length || buffer.length > MAX_THUMBNAIL_BYTES) throw new Error("thumbnail-too-large");
+
+  return {
+    buffer,
+    contentType: match[1].toLowerCase() === "image/jpg" ? "image/jpeg" : match[1].toLowerCase()
+  };
+}
+
+function encodeGithubPath(path) {
+  return path.split("/").map(encodeURIComponent).join("/");
+}
+
 function normalizeVideo(video, index) {
   const code = cleanText(video.code || video.id || `MDV-${String(index + 1).padStart(2, "0")}`, 24);
   const previewUrl = normalizePreviewUrl(video.previewUrl || video.driveUrl || "");
@@ -156,11 +174,42 @@ async function githubRequest(path, options = {}) {
   return payload;
 }
 
-async function saveVideosToGithub(videos, profile) {
+async function uploadThumbnailToGithub(video, thumbnailDataUrl, repo, branch) {
+  const thumbnail = decodeThumbnailDataUrl(thumbnailDataUrl);
+  const path = `assets/thumbs/${video.uid}-thumb.jpg`;
+  const encodedPath = encodeGithubPath(path);
+  let currentFile = null;
+
+  try {
+    currentFile = await githubRequest(`/repos/${repo}/contents/${encodedPath}?ref=${encodeURIComponent(branch)}`);
+  } catch (error) {
+    if (!String(error.message).includes("Not Found")) throw error;
+  }
+
+  await githubRequest(`/repos/${repo}/contents/${encodedPath}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      message: `Update thumbnail for ${video.code}`,
+      content: thumbnail.buffer.toString("base64"),
+      sha: currentFile?.sha,
+      branch
+    })
+  });
+
+  return path;
+}
+
+async function saveVideosToGithub(videos, profile, rawVideos) {
   const repo = process.env.GITHUB_REPO || DEFAULT_REPO;
   const branch = process.env.GITHUB_BRANCH || DEFAULT_BRANCH;
   const encodedPath = VIDEO_DATA_PATH.split("/").map(encodeURIComponent).join("/");
   let currentFile = null;
+
+  for (let index = 0; index < videos.length; index += 1) {
+    const thumbnailDataUrl = rawVideos?.[index]?.thumbnailDataUrl;
+    if (!String(thumbnailDataUrl || "").startsWith("data:image/")) continue;
+    videos[index].thumbnailUrl = await uploadThumbnailToGithub(videos[index], thumbnailDataUrl, repo, branch);
+  }
 
   try {
     currentFile = await githubRequest(`/repos/${repo}/contents/${encodedPath}?ref=${encodeURIComponent(branch)}`);
@@ -212,7 +261,7 @@ module.exports = async function handler(request, response) {
     }
 
     const videos = validateVideos(body.videos);
-    const saved = await saveVideosToGithub(videos, profile);
+    const saved = await saveVideosToGithub(videos, profile, body.videos);
     sendJson(response, 200, {
       ok: true,
       profile,
@@ -231,3 +280,6 @@ module.exports = async function handler(request, response) {
     sendJson(response, status, { ok: false, message });
   }
 };
+
+module.exports.verifyGoogleIdToken = verifyGoogleIdToken;
+module.exports.getDriveFileId = getDriveFileId;
