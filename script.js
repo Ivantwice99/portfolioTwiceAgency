@@ -723,7 +723,7 @@ function renderVideoTiles() {
     const style = thumbnail ? ` style="--thumb: url('${escapeHtml(thumbnail)}');"` : "";
 
     return `
-      <button class="video-tile" type="button" data-open-video="${escapeHtml(video.uid || `video-${index + 1}`)}" data-video-id="${escapeHtml(video.code)}" data-video-ratio="${escapeHtml(video.ratio)}" data-video-quality="${escapeHtml(video.quality || "original")}" data-video-title="${escapeHtml(title)}" data-video-preview="${escapeHtml(getVideoPreviewUrl(video))}">
+      <button class="video-tile" type="button" data-open-video="${escapeHtml(video.uid || `video-${index + 1}`)}" data-video-id="${escapeHtml(video.code)}" data-video-ratio="${escapeHtml(video.ratio)}" data-video-quality="${escapeHtml(video.quality || "original")}" data-video-title="${escapeHtml(title)}" data-video-preview="${escapeHtml(getVideoPreviewUrl(video))}" data-video-thumbnail="${escapeHtml(thumbnail)}">
         <span class="video-thumb thumb-${escapeHtml(video.tone || "gold")}"${style} aria-hidden="true">
           <i></i>
         </span>
@@ -1810,7 +1810,8 @@ videoGrid?.addEventListener("click", (event) => {
   openVideo(
     button.dataset.videoTitle || button.querySelector(".tile-copy strong")?.textContent.trim() || "Video",
     button.dataset.videoPreview || "",
-    button.dataset.videoRatio || "16:9"
+    button.dataset.videoRatio || "16:9",
+    button.dataset.videoThumbnail || ""
   );
 });
 
@@ -2208,6 +2209,7 @@ const resetVideoSurfaces = () => {
   if (videoPlayer) {
     videoPlayer.pause();
     videoPlayer.removeAttribute("src");
+    videoPlayer.removeAttribute("poster");
     videoPlayer.load();
   }
 
@@ -2228,19 +2230,20 @@ const showEmbedVideo = (previewUrl) => {
 const prewarmVideoPreview = (previewUrl) => {
   if (!previewUrl || prefetchedVideoPreviews.has(previewUrl)) return;
   prefetchedVideoPreviews.add(previewUrl);
+  const sourceUrl = getDriveDownloadUrl(previewUrl) || (isDirectVideoUrl(previewUrl) ? previewUrl : "");
 
   const link = document.createElement("link");
   link.rel = "prefetch";
-  link.as = "document";
-  link.href = withAutoplay(previewUrl);
+  link.href = sourceUrl || withAutoplay(previewUrl);
+  if (sourceUrl) link.as = "video";
   document.head.append(link);
 };
 
-const openVideo = (title, previewUrl, ratio) => {
+const openVideo = (title, previewUrl, ratio, thumbnailUrl = "") => {
   if (!videoModal || !modalPanel) return;
   const copy = translations[currentLanguage] || translations.en;
   const driveId = getDriveFileId(previewUrl);
-  const sourceUrl = !driveId && isDirectVideoUrl(previewUrl) ? previewUrl : "";
+  const sourceUrl = getDriveDownloadUrl(previewUrl) || (!driveId && isDirectVideoUrl(previewUrl) ? previewUrl : "");
 
   pauseAmbientForVideo();
 
@@ -2255,11 +2258,14 @@ const openVideo = (title, previewUrl, ratio) => {
     videoFrame.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
   }
 
-  if (driveId && previewUrl) {
-    showEmbedVideo(previewUrl);
-  } else if (videoPlayer && sourceUrl) {
+  videoModal.classList.add("is-open");
+  videoModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+
+  if (videoPlayer && sourceUrl) {
     currentVideoFallback = previewUrl;
     videoPlayer.preload = "auto";
+    if (thumbnailUrl) videoPlayer.poster = thumbnailUrl;
     videoPlayer.title = copy.videoPreviewLabel;
     videoPlayer.src = sourceUrl;
     modalScreen?.classList.add("has-video", "has-native");
@@ -2274,9 +2280,6 @@ const openVideo = (title, previewUrl, ratio) => {
     showEmbedVideo(previewUrl);
   }
 
-  videoModal.classList.add("is-open");
-  videoModal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
   modalPanel.focus();
   window.requestAnimationFrame(syncEmbedScale);
 };
