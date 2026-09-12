@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-12T04:40:44.290Z",
+  "updatedAt": "2026-09-12T15:35:00.011Z",
   "source": "youtube-public-snapshot",
   "channels": [
     {
@@ -10,40 +10,40 @@
       "channelId": "UCq2Nmwq8IhC-ztBoKIs4Qsg",
       "thumbnail": "https://yt3.googleusercontent.com/5R90g75WYI0sYclhuF_fMFX9Z_cPlrr0mJckYHkhl78BOa1RHfj6Iu_nLsMxRU9Ar1Fv8dxs5Q=s160-c-k-c0x00ffffff-no-rj",
       "statistics": {
-        "viewCount": "9160706",
+        "viewCount": "9164995",
         "subscriberCount": "18500",
         "videoCount": "296"
       },
       "latestTitle": "Madre EBRIA Usó a sus Hijos como Excusa Frente a los Oficiales",
       "recent": {
-        "views": 55900,
-        "likes": 911,
+        "views": 58000,
+        "likes": 935,
         "sample": 6
       },
       "videos": [
         {
           "id": "dx52X2Ks7pk",
           "title": "Madre EBRIA Usó a sus Hijos como Excusa Frente a los Oficiales",
-          "viewCount": "1200",
-          "likeCount": "67"
+          "viewCount": "1900",
+          "likeCount": "82"
         },
         {
           "id": "nbTwhqPwmck",
           "title": "Arruinó su Vuelo por Estar BORRACHO: La Policía Tuvo que Intervenir",
-          "viewCount": "3500",
-          "likeCount": "90"
+          "viewCount": "3700",
+          "likeCount": "92"
         },
         {
           "id": "GF7u0csIWZc",
           "title": "Cliente \\",
-          "viewCount": "6200",
-          "likeCount": "170"
+          "viewCount": "6400",
+          "likeCount": "176"
         },
         {
           "id": "hrStLglu_Zk",
           "title": "Pensó que Podía Robar y Volar Tranquilo… le SALIÓ MUY MAL",
-          "viewCount": "10000",
-          "likeCount": "216"
+          "viewCount": "11000",
+          "likeCount": "218"
         },
         {
           "id": "B2aSJy7NXSc",
@@ -55,7 +55,7 @@
           "id": "HyKOBW4zwrU",
           "title": "Creyó que Podía ENGAÑAR a la POLICÍA... (Karma Instantáneo)",
           "viewCount": "13000",
-          "likeCount": "214"
+          "likeCount": "213"
         }
       ],
       "source": "youtube-public-snapshot"
