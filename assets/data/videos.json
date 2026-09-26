@@ -1,7 +1,24 @@
 {
-  "updatedAt": "2026-09-24T01:42:08.112Z",
+  "updatedAt": "2026-09-26T15:13:26.224Z",
   "updatedBy": "vaguacateman@gmail.com",
   "videos": [
+    {
+      "uid": "example-12",
+      "code": "MDV-12",
+      "ratio": "9:16",
+      "tone": "silver",
+      "quality": "original",
+      "previewUrl": "https://drive.google.com/file/d/1CA40MzSjPK0JXlhKgBED9JM7BR0BKhXQ/preview",
+      "thumbnailUrl": "assets/thumbs/example-12-thumb.jpg",
+      "title": {
+        "en": "Test Montreal.mp4",
+        "es": "Test Montreal.mp4"
+      },
+      "description": {
+        "en": "Short portfolio example.",
+        "es": "Ejemplo breve de portafolio."
+      }
+    },
     {
       "uid": "example-11",
       "code": "MDV-11",
