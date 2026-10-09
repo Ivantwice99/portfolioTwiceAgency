@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-09T06:15:02.638Z",
+  "updatedAt": "2026-10-09T18:23:35.701Z",
   "source": "youtube-public-snapshot",
   "channels": [
     {
@@ -10,17 +10,23 @@
       "channelId": "UCq2Nmwq8IhC-ztBoKIs4Qsg",
       "thumbnail": "https://yt3.googleusercontent.com/5R90g75WYI0sYclhuF_fMFX9Z_cPlrr0mJckYHkhl78BOa1RHfj6Iu_nLsMxRU9Ar1Fv8dxs5Q=s160-c-k-c0x00ffffff-no-rj",
       "statistics": {
-        "viewCount": "9666771",
+        "viewCount": "9676129",
         "subscriberCount": "18900",
-        "videoCount": "307"
+        "videoCount": "308"
       },
-      "latestTitle": "FALSO POLICÍA se Pasa de Listo Frente a Oficiales REALES y Termina ARRESTADO",
+      "latestTitle": "Vecinos PROBLEMÁTICOS Denuncian con MENTIRAS y la POLICÍA los Descubre",
       "recent": {
         "views": 0,
-        "likes": 1087,
+        "likes": 938,
         "sample": 6
       },
       "videos": [
+        {
+          "id": "WZnmr3knb0I",
+          "title": "Vecinos PROBLEMÁTICOS Denuncian con MENTIRAS y la POLICÍA los Descubre",
+          "viewCount": "0",
+          "likeCount": "6"
+        },
         {
           "id": "jqUuAQ1iWMk",
           "title": "FALSO POLICÍA se Pasa de Listo Frente a Oficiales REALES y Termina ARRESTADO",
@@ -31,31 +37,25 @@
           "id": "sespWM7JyqE",
           "title": "Hijo TÓXICO Desafía a Su Propio Padre y la POLICÍA Interviene",
           "viewCount": "0",
-          "likeCount": "215"
+          "likeCount": "218"
         },
         {
           "id": "ycey1nosqdA",
           "title": "Pasajeros ARROGANTES Provocan Caos en el Aeropuerto y Llega la POLICÍA",
           "viewCount": "0",
-          "likeCount": "164"
+          "likeCount": "165"
         },
         {
           "id": "-IYkpoGqgOs",
           "title": "KAREN Intenta Estafar la Tienda y Termina ESPOSADA Frente a Todos",
           "viewCount": "0",
-          "likeCount": "133"
+          "likeCount": "134"
         },
         {
           "id": "EiWl5aF9kbI",
           "title": "Armó un Caos en el Aeropuerto Creyendo que No Habría Consecuencias",
           "viewCount": "0",
-          "likeCount": "321"
-        },
-        {
-          "id": "WmI__D2o45k",
-          "title": "Agredió a Su Propia Madre y Creyó que la POLICÍA No Haría Nada",
-          "viewCount": "0",
-          "likeCount": "161"
+          "likeCount": "322"
         }
       ],
       "source": "youtube-public-snapshot"
@@ -126,7 +126,7 @@
       "channelId": "UCy-aPWvyq50o6sH5rtDJgFQ",
       "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_nMdYoxwG2uEsL6nBTHfVJJWktEYST0PWQEyeHFu_I0sA=s88-c-k-c0x00ffffff-no-rj-mo",
       "statistics": {
-        "viewCount": "4800354",
+        "viewCount": "4800364",
         "subscriberCount": "21900",
         "videoCount": "361"
       },
