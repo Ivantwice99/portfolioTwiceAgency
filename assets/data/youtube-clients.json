@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T17:16:36.481Z",
+  "updatedAt": "2026-10-22T04:55:46.408Z",
   "source": "youtube-public-snapshot",
   "channels": [
     {
@@ -12,15 +12,21 @@
       "statistics": {
         "viewCount": "9864648",
         "subscriberCount": "19100",
-        "videoCount": "312"
+        "videoCount": "313"
       },
-      "latestTitle": "Usaron la Excusa Familiar Frente a los Oficiales y Todo Salió Mal",
+      "latestTitle": "Cuando los VECINOS TÓXICOS Rompieron la Orden Judicial y lo PAGARON MUY CARO",
       "recent": {
         "views": 0,
-        "likes": 1024,
+        "likes": 968,
         "sample": 6
       },
       "videos": [
+        {
+          "id": "YXwEKOHEcf8",
+          "title": "Cuando los VECINOS TÓXICOS Rompieron la Orden Judicial y lo PAGARON MUY CARO",
+          "viewCount": "0",
+          "likeCount": "63"
+        },
         {
           "id": "zcf9-d6NNcI",
           "title": "Usaron la Excusa Familiar Frente a los Oficiales y Todo Salió Mal",
@@ -31,31 +37,25 @@
           "id": "7Vr3zEc-5J0",
           "title": "Pensaron que por Ser Menores No Irían a la Cárcel (¡Karma Instantáneo!)",
           "viewCount": "0",
-          "likeCount": "175"
+          "likeCount": "183"
         },
         {
           "id": "SWgW3trnV2s",
           "title": "Huéspedes ARROGANTES Negaron a PAGAR el HOTEL y Terminan ESPOSADOS",
           "viewCount": "0",
-          "likeCount": "196"
+          "likeCount": "197"
         },
         {
           "id": "5xrKyiqsdG4",
           "title": "Pensó que Podía Forzar su Entrada al Vuelo… El Final Fue Inevitable",
           "viewCount": "0",
-          "likeCount": "281"
+          "likeCount": "283"
         },
         {
           "id": "WZnmr3knb0I",
           "title": "Vecinos PROBLEMÁTICOS Denuncian con MENTIRAS y la POLICÍA los Descubre",
           "viewCount": "0",
           "likeCount": "129"
-        },
-        {
-          "id": "jqUuAQ1iWMk",
-          "title": "FALSO POLICÍA se Pasa de Listo Frente a Oficiales REALES y Termina ARRESTADO",
-          "viewCount": "0",
-          "likeCount": "130"
         }
       ],
       "source": "youtube-public-snapshot"
