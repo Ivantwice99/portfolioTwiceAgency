@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-29T18:30:39.391Z",
+  "updatedAt": "2026-10-30T05:55:09.403Z",
   "source": "youtube-public-snapshot",
   "channels": [
     {
@@ -17,7 +17,7 @@
       "latestTitle": "Vecinos Alertan al 911 en SECRETO y la Intervención Policial lo Cambia Todo",
       "recent": {
         "views": 0,
-        "likes": 796,
+        "likes": 817,
         "sample": 6
       },
       "videos": [
@@ -25,19 +25,19 @@
           "id": "zJotVc5Tan8",
           "title": "Vecinos Alertan al 911 en SECRETO y la Intervención Policial lo Cambia Todo",
           "viewCount": "0",
-          "likeCount": "60"
+          "likeCount": "67"
         },
         {
           "id": "T1RYlaJVqXE",
           "title": "Cuando KARENS Intentan COMPRAR su LIBERTAD (¡KARMA INMEDIATO!)",
           "viewCount": "0",
-          "likeCount": "93"
+          "likeCount": "95"
         },
         {
           "id": "Uj6ptBZ38C0",
           "title": "Creyó que Podía Ignorar la Ley y el Final Fue Inevitable",
           "viewCount": "0",
-          "likeCount": "201"
+          "likeCount": "204"
         },
         {
           "id": "YXwEKOHEcf8",
@@ -55,7 +55,7 @@
           "id": "7Vr3zEc-5J0",
           "title": "Pensaron que por Ser Menores No Irían a la Cárcel (¡Karma Instantáneo!)",
           "viewCount": "0",
-          "likeCount": "218"
+          "likeCount": "227"
         }
       ],
       "source": "youtube-public-snapshot"
@@ -75,7 +75,7 @@
       "latestTitle": "EL PAPA NEGRO – El Secreto MÁS TERRADOR del Vaticano",
       "recent": {
         "views": 0,
-        "likes": 9063,
+        "likes": 9062,
         "sample": 6
       },
       "videos": [
@@ -89,7 +89,7 @@
           "id": "HYY2EP7OmJA",
           "title": "Paracelso y el Conocimiento PROHIBIDO de los Elementales",
           "viewCount": "0",
-          "likeCount": "2055"
+          "likeCount": "2054"
         },
         {
           "id": "mrBMhs-kjj0",
@@ -185,8 +185,8 @@
       "thumbnail": "https://yt3.googleusercontent.com/Qb1-MNczZat1HZ379iIQdB-rL0rButnN8jTGibddWg2nSftYd3gBqng2Uefjn9GEWKux1G1Y=s160-c-k-c0x00ffffff-no-rj",
       "statistics": {
         "viewCount": "39051617",
-        "subscriberCount": "95400",
-        "videoCount": "362"
+        "subscriberCount": "95500",
+        "videoCount": "363"
       },
       "latestTitle": "¡PLAN CONTRA MADURO! MOVIMIENTO BÉLICO DESDE PANAMÁ APUNTAN A VENEZUELA",
       "recent": {
@@ -252,7 +252,44 @@
         "likes": 91,
         "sample": 6
       },
-      "videos": [],
+      "videos": [
+        {
+          "id": "xrjeHUmj4ek",
+          "title": "Probamos 7 cremas hidratantes con color para piel madura: la de $5 superó a la de $50",
+          "viewCount": "0",
+          "likeCount": "12"
+        },
+        {
+          "id": "cqAqfiyvAB4",
+          "title": "Probamos 7 lociones de farmacia para la piel tipo papel crepé: la botella \\",
+          "viewCount": "0",
+          "likeCount": "17"
+        },
+        {
+          "id": "MO5PeTN7nGY",
+          "title": "La crema de $1 de Walmart que supera a los productos de lujo de $192",
+          "viewCount": "0",
+          "likeCount": "10"
+        },
+        {
+          "id": "aI3U4Q0BjYM",
+          "title": "7 Drugstore Concealers for Mature Eyes RANKED: Which Won't Settle into Lines?",
+          "viewCount": "0",
+          "likeCount": "31"
+        },
+        {
+          "id": "yQla44zHCVU",
+          "title": "Probamos 7 cremas faciales de invierno para piel seca y madura: una clara ganadora",
+          "viewCount": "0",
+          "likeCount": "15"
+        },
+        {
+          "id": "7HU5AVnU8AI",
+          "title": "Probamos 7 protectores solares minerales para mujeres mayores de 50 años: solo UNO aprobó",
+          "viewCount": "0",
+          "likeCount": "6"
+        }
+      ],
       "source": "youtube-public-snapshot"
     }
   ]
