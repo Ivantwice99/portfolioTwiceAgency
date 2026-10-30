@@ -25,7 +25,7 @@
     <link rel="preload" href="assets/audio/ambient-loop.mp3" as="audio" type="audio/mpeg">
     <link rel="preconnect" href="https://www.youtube-nocookie.com">
     <link rel="preconnect" href="https://i.ytimg.com">
-    <link rel="stylesheet" href="styles.css?v=youtube-portfolio-v1">
+    <link rel="stylesheet" href="styles.css?v=youtube-ready-v2">
   </head>
   <body>
     <div class="scene" aria-hidden="true">
@@ -251,7 +251,17 @@
         </button>
         <div class="modal-screen">
           <video data-video-player title="Video preview" controls playsinline preload="metadata" controlslist="nodownload noremoteplayback" hidden></video>
-          <iframe data-video-frame title="Video preview" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen hidden></iframe>
+          <div class="video-load-layer" data-video-load-layer hidden>
+            <img class="video-load-poster" data-video-load-poster alt="">
+            <div class="video-load-content">
+              <span class="video-load-spinner" aria-hidden="true"></span>
+              <p data-video-load-status role="status" aria-live="polite"></p>
+              <div class="video-load-actions" data-video-load-actions hidden>
+                <button type="button" data-video-retry data-i18n="videoRetry">Retry</button>
+                <a data-video-external target="_blank" rel="noopener noreferrer" data-i18n="videoOpenYouTube">Open on YouTube</a>
+              </div>
+            </div>
+          </div>
           <span class="play-ring" aria-hidden="true"></span>
         </div>
       </section>
@@ -355,6 +365,7 @@
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="assets/video-sources.js?v=youtube-portfolio-v1"></script>
-    <script src="script.js?v=youtube-portfolio-v1"></script>
+    <script src="assets/youtube-player.js?v=youtube-ready-v2"></script>
+    <script src="script.js?v=youtube-ready-v2"></script>
   </body>
 </html>

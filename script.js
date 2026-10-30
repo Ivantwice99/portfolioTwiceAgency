@@ -8,7 +8,13 @@ const videoModal = document.querySelector("[data-video-modal]");
 const modalPanel = videoModal?.querySelector(".modal-panel");
 const modalScreen = document.querySelector(".modal-screen");
 const videoPlayer = document.querySelector("[data-video-player]");
-const videoFrame = document.querySelector("[data-video-frame]");
+let videoFrame = document.querySelector("[data-video-frame]");
+const videoLoadLayer = document.querySelector("[data-video-load-layer]");
+const videoLoadPoster = document.querySelector("[data-video-load-poster]");
+const videoLoadStatus = document.querySelector("[data-video-load-status]");
+const videoLoadActions = document.querySelector("[data-video-load-actions]");
+const videoRetry = document.querySelector("[data-video-retry]");
+const videoExternal = document.querySelector("[data-video-external]");
 const videoGrid = document.querySelector("[data-video-grid]");
 const videoStatus = document.querySelector("[data-video-status]");
 const adminOpen = document.querySelector("[data-admin-open]");
@@ -118,6 +124,10 @@ const translations = {
     ambientAria: "Audio ambiental 5%",
     videoPortfolio: "Video portfolio",
     videoPreviewLabel: "Preview de video",
+    videoLoading: "Cargando video...",
+    videoPlaybackError: "No se pudo cargar. Reintenta o abre YouTube.",
+    videoRetry: "Reintentar",
+    videoOpenYouTube: "Abrir en YouTube",
     menuTitle: "Menú de edición",
     videos: "Videos",
     clients: "Clientes",
@@ -260,6 +270,10 @@ const translations = {
     ambientAria: "Ambient audio 5%",
     videoPortfolio: "Video portfolio",
     videoPreviewLabel: "Video preview",
+    videoLoading: "Loading video...",
+    videoPlaybackError: "Could not load. Retry or open on YouTube.",
+    videoRetry: "Retry",
+    videoOpenYouTube: "Open on YouTube",
     menuTitle: "Editing menu",
     videos: "Videos",
     clients: "Clients",
@@ -2187,6 +2201,8 @@ function getDriveDownloadUrl(url) {
 }
 
 let currentVideoFallback = "";
+let currentVideoDetails = null;
+let youtubePlayback = null;
 let shouldRestoreAmbientAfterVideo = false;
 const prefetchedVideoPreviews = new Set();
 
@@ -2221,9 +2237,15 @@ const syncEmbedScale = () => {
 };
 
 const resetVideoSurfaces = () => {
+  youtubePlayback?.destroy();
+  youtubePlayback = null;
   currentVideoFallback = "";
-  modalScreen?.classList.remove("has-video", "has-native", "has-embed", "has-youtube");
+  modalScreen?.classList.remove("has-video", "has-native", "has-embed", "has-youtube", "is-loading", "has-load-error");
   modalScreen?.style.removeProperty("--embed-scale");
+  modalScreen?.removeAttribute("data-playback-error");
+  if (videoLoadLayer) videoLoadLayer.hidden = true;
+  if (videoLoadActions) videoLoadActions.hidden = true;
+  if (videoLoadStatus) videoLoadStatus.textContent = "";
 
   if (videoPlayer) {
     videoPlayer.pause();
@@ -2234,29 +2256,57 @@ const resetVideoSurfaces = () => {
   }
 
   if (videoFrame) {
-    videoFrame.hidden = true;
-    videoFrame.src = "";
+    videoFrame.remove();
+    videoFrame = null;
   }
 };
 
 const showEmbedVideo = (previewUrl) => {
-  if (!videoFrame || !previewUrl) return;
+  if (!modalScreen || !previewUrl) return;
 
   if (videoPlayer) videoPlayer.hidden = true;
-  videoFrame.hidden = false;
-  modalScreen?.classList.remove("has-native");
-  modalScreen?.classList.add("has-video", "has-embed");
-  const youtubeUrl = getYouTubeEmbedUrl(previewUrl);
-  modalScreen?.classList.toggle("has-youtube", Boolean(youtubeUrl));
-  if (youtubeUrl) {
-    const url = new URL(youtubeUrl);
-    url.searchParams.set("autoplay", "1");
-    url.searchParams.set("playsinline", "1");
-    url.searchParams.set("rel", "0");
-    videoFrame.src = url.toString();
-  } else {
-    videoFrame.src = withAutoplay(previewUrl);
+  modalScreen.classList.remove("has-native", "has-embed");
+  modalScreen.classList.add("has-video");
+  const youtubeId = getYouTubeVideoId(previewUrl);
+  modalScreen.classList.toggle("has-youtube", Boolean(youtubeId));
+  if (youtubeId) {
+    const copy = getCopy();
+    modalScreen.classList.add("is-loading");
+    if (videoLoadLayer) videoLoadLayer.hidden = false;
+    if (videoLoadStatus) videoLoadStatus.textContent = copy.videoLoading;
+    if (videoLoadPoster) {
+      videoLoadPoster.src = currentVideoDetails?.thumbnailUrl || getYouTubeThumbnailUrl(previewUrl);
+    }
+    if (videoExternal) videoExternal.href = `https://www.youtube.com/watch?v=${youtubeId}`;
+    youtubePlayback = TwiceYouTubePlayer.create({
+      container: modalScreen,
+      videoId: youtubeId,
+      title: currentVideoDetails?.title || copy.videoPreviewLabel,
+      onReady() {
+        modalScreen.classList.remove("is-loading", "has-load-error");
+        modalScreen.classList.add("has-embed");
+        if (videoLoadLayer) videoLoadLayer.hidden = true;
+      },
+      onError(error) {
+        modalScreen.setAttribute("data-playback-error", error.message);
+        modalScreen.classList.remove("is-loading", "has-embed");
+        modalScreen.classList.add("has-load-error");
+        if (videoLoadLayer) videoLoadLayer.hidden = false;
+        if (videoLoadActions) videoLoadActions.hidden = false;
+        if (videoLoadStatus) videoLoadStatus.textContent = getCopy().videoPlaybackError;
+      }
+    });
+    return;
   }
+  videoFrame = document.createElement("iframe");
+  videoFrame.setAttribute("data-video-frame", "");
+  videoFrame.title = getCopy().videoPreviewLabel;
+  videoFrame.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
+  videoFrame.allowFullscreen = true;
+  videoFrame.referrerPolicy = "strict-origin-when-cross-origin";
+  videoFrame.src = withAutoplay(previewUrl);
+  modalScreen.append(videoFrame);
+  modalScreen.classList.add("has-embed");
   window.requestAnimationFrame(syncEmbedScale);
 };
 
@@ -2279,18 +2329,14 @@ const openVideo = (title, previewUrl, ratio, thumbnailUrl = "") => {
   const driveId = getDriveFileId(previewUrl);
   const sourceUrl = getDriveDownloadUrl(previewUrl) || (!driveId && isDirectVideoUrl(previewUrl) ? previewUrl : "");
 
-  pauseAmbientForVideo();
+  if (!videoModal.classList.contains("is-open")) pauseAmbientForVideo();
+  currentVideoDetails = { title, previewUrl, ratio, thumbnailUrl };
 
   modalPanel.setAttribute("aria-label", `${copy.videoPreviewLabel}: ${title}`);
   modalPanel.classList.remove("is-portrait", "is-landscape");
   modalPanel.classList.add(ratio === "9:16" ? "is-portrait" : "is-landscape");
 
   resetVideoSurfaces();
-
-  if (videoFrame) {
-    videoFrame.title = copy.videoPreviewLabel;
-    videoFrame.allow = "autoplay; fullscreen; encrypted-media; picture-in-picture";
-  }
 
   videoModal.classList.add("is-open");
   videoModal.setAttribute("aria-hidden", "false");
@@ -2326,8 +2372,15 @@ const closeVideo = () => {
   document.body.classList.remove("modal-open");
   modalPanel?.classList.remove("is-portrait", "is-landscape");
   resetVideoSurfaces();
+  currentVideoDetails = null;
   restoreAmbientAfterVideo();
 };
+
+videoRetry?.addEventListener("click", () => {
+  if (!currentVideoDetails) return;
+  const { title, previewUrl, ratio, thumbnailUrl } = currentVideoDetails;
+  openVideo(title, previewUrl, ratio, thumbnailUrl);
+});
 
 videoPlayer?.addEventListener("error", () => {
   const fallback = currentVideoFallback;

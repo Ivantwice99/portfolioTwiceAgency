@@ -19,7 +19,12 @@ an English/Spanish portfolio, not a redesign or a new marketing landing page.
 Keep the existing video tile and modal as the canonical public playback flow.
 YouTube uses its standard visible player controls in a responsive 16:9 iframe,
 without the legacy Drive mobile scaling. Native video playback and the existing
-Drive fallback stay available. Closing the modal clears playback surfaces.
+Drive fallback stay available. Each opening creates a fresh eager iframe;
+never reuse a frame by navigating it through an empty URL. Keep the thumbnail
+and a stable loading status visible until the official YouTube API confirms
+readiness. On errors or a bounded timeout, preserve the thumbnail and offer
+Retry and Open on YouTube. Destroying a player cancels its callbacks so closing
+or switching videos cannot insert a stale player. Closing clears playback.
 
 Preserve admin IDs and ordering on save. Normalize YouTube links consistently in
 the editor and on the server. Preserve explicit thumbnail overrides; otherwise

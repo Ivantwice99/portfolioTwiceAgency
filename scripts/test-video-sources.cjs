@@ -54,7 +54,7 @@ function createClassList() {
   };
 }
 function element() {
-  return { classList: createClassList(), style: { removeProperty() {}, setProperty() {} }, setAttribute() {}, focus() {} };
+  return { classList: createClassList(), style: { removeProperty() {}, setProperty() {} }, setAttribute() {}, removeAttribute() {}, focus() {}, append() {}, remove() {} };
 }
 function playerContext() {
   const context = {
@@ -62,12 +62,23 @@ function playerContext() {
     isDirectVideoUrl: value => /\.(mp4|webm|ogg)([?#]|$)/i.test(value),
     smallScreenQuery: { matches: true },
     modalScreen: element(), modalPanel: element(), videoModal: element(),
-    videoFrame: { src: "" },
+    videoFrame: null,
+    videoLoadLayer: { hidden: true }, videoLoadPoster: {}, videoLoadStatus: {},
+    videoLoadActions: { hidden: true }, videoExternal: {}, videoRetry: null,
+    players: [],
     videoPlayer: { pause() {}, load() {}, removeAttribute(name) { delete this[name]; }, play() { return Promise.resolve(); } },
     ambientEnabled: false, ambientAudio: null,
     document: { body: element(), head: { append() { throw new Error("Unexpected prefetch"); } } },
     window: { location: { href: "https://portfolio.test/" }, requestAnimationFrame: callback => callback() },
-    translations: { en: { videoPreviewLabel: "Video" } }, currentLanguage: "en"
+    translations: { en: { videoPreviewLabel: "Video", videoLoading: "Loading", videoPlaybackError: "Error" } }, currentLanguage: "en"
+  };
+  context.getCopy = () => context.translations.en;
+  context.TwiceYouTubePlayer = {
+    create(options) {
+      const controller = { options, destroyed: false, destroy() { this.destroyed = true; } };
+      context.players.push(controller);
+      return controller;
+    }
   };
   const helpers = source.slice(source.indexOf("function getDriveFileId("), source.indexOf('let currentVideoFallback = "";'));
   const modal = source.slice(source.indexOf('let currentVideoFallback = "";'), source.indexOf('videoPlayer?.addEventListener("error"'));
@@ -79,20 +90,40 @@ test("YouTube opens in the responsive embed, not the Drive proxy or native video
   const context = playerContext();
   for (const video of catalog.videos) {
     context.actions.openVideo(video.title.en, video.previewUrl, video.ratio, video.thumbnailUrl);
-    const url = new URL(context.videoFrame.src);
-    assert.equal(url.hostname, "www.youtube-nocookie.com");
-    assert.equal(url.searchParams.get("autoplay"), "1");
-    assert.equal(url.searchParams.get("playsinline"), "1");
+    const controller = context.players.at(-1);
+    assert.equal(controller.options.videoId, sources.getYouTubeVideoId(video.previewUrl));
     assert.ok(context.modalScreen.classList.contains("has-youtube"));
+    assert.ok(context.modalScreen.classList.contains("is-loading"));
+    assert.ok(!context.modalScreen.classList.contains("has-embed"));
+    assert.equal(context.videoLoadLayer.hidden, false);
+    assert.equal(context.videoLoadPoster.src, video.thumbnailUrl);
+    controller.options.onReady();
+    assert.equal(context.videoLoadLayer.hidden, true);
+    assert.ok(context.modalScreen.classList.contains("has-embed"));
     assert.ok(!context.modalScreen.classList.contains("has-native"));
     assert.equal(context.videoPlayer.src, undefined);
     assert.equal(context.videoPlayer.hidden, true);
-    assert.equal(context.videoFrame.hidden, false);
     context.actions.prewarmVideoPreview(video.previewUrl);
     context.actions.closeVideo();
-    assert.equal(context.videoFrame.src, "");
+    assert.equal(controller.destroyed, true);
     assert.ok(!context.modalScreen.classList.contains("has-youtube"));
   }
+});
+
+test("failed playback keeps the thumbnail and exposes retry plus the correct YouTube link", () => {
+  const context = playerContext();
+  const video = catalog.videos[0];
+  context.actions.openVideo(video.title.en, video.previewUrl, video.ratio, video.thumbnailUrl);
+  context.players[0].options.onError(new Error("blocked"));
+  assert.equal(context.videoLoadLayer.hidden, false);
+  assert.equal(context.videoLoadActions.hidden, false);
+  assert.equal(context.videoLoadStatus.textContent, "Error");
+  assert.equal(context.videoExternal.href, "https://www.youtube.com/watch?v=2kxwN11-hXs");
+  assert.ok(!context.modalScreen.classList.contains("has-embed"));
+  context.actions.openVideo(video.title.en, video.previewUrl, video.ratio, video.thumbnailUrl);
+  assert.equal(context.players[0].destroyed, true);
+  assert.equal(context.videoLoadActions.hidden, true);
+  assert.equal(context.players.length, 2);
 });
 
 test("existing Drive and direct-file playback remain supported", () => {

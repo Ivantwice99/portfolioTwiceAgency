@@ -59,7 +59,9 @@ The published catalog uses ten YouTube videos from @Miotismon. Crypto & Tech Ree
 
 YouTube videos must be viewable by visitors and allow embedding. Unlisted videos work; private videos do not. Changing a YouTube video's visibility or embedding settings is managed in YouTube, not by this website.
 
-Run the video integration checks with `node --test scripts/test-video-sources.cjs`. The original Drive catalog is preserved in Git history and in the local `portfolio-videos/videos-drive-backup-before-youtube.json` backup. Selecting an arbitrary thumbnail frame for a YouTube video requires its local MP4 copy; the editor does not attempt to read pixels from a cross-origin YouTube player.
+Run the video integration checks with `node --test scripts/test-video-sources.cjs scripts/test-youtube-player.cjs`. Each modal opening uses a fresh eager iframe; the official IFrame API must report readiness before it becomes visible. The thumbnail and loading status remain visible in the meantime. Errors or a 20-second timeout expose Retry and Open on YouTube; blocked API downloads time out after 15 seconds. Closed players ignore late callbacks.
+
+The original Drive catalog is preserved in Git history and in the local `portfolio-videos/videos-drive-backup-before-youtube.json` backup. Selecting an arbitrary thumbnail frame for a YouTube video requires its local MP4 copy; the editor does not attempt to read pixels from a cross-origin YouTube player.
 
 The admin editor is protected by Google Sign-In and only allows:
 
