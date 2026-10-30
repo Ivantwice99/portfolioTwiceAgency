@@ -5,6 +5,7 @@ Thumbs.db
 .env
 .env.*
 cloudflare/dist/
+cloudflare/pages-dist/
 cloudflare/.wrangler/
 cloudflare/.dev.vars
 cloudflare/.dev.vars.*

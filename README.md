@@ -85,7 +85,7 @@ In Google Cloud, create an OAuth Web client and add the portfolio's URL as an au
 Primary deployment:
 
 ```text
-https://twiceagency-portfolio.vaguacateman.workers.dev
+https://twiceagency.pages.dev
 ```
 
 Keep the existing Vercel deployment active as a backup:
@@ -94,7 +94,7 @@ Keep the existing Vercel deployment active as a backup:
 https://portfolio-twice-agency.vercel.app
 ```
 
-Cloudflare-specific files live in `cloudflare/`; the existing Vercel API handlers remain unchanged. The Cloudflare Worker reuses the admin handlers, serves only allowlisted public assets and streams Drive byte ranges using the Workers Fetch API. Social preview URLs are rewritten to the Cloudflare origin without changing the Vercel copy.
+Cloudflare-specific files live in `cloudflare/`; the existing Vercel API handlers remain unchanged. Pages serves the same portfolio without changing its design. A private `PORTFOLIO_API` service binding forwards `/api/*` to the existing `twiceagency-portfolio` Worker, retaining server-side Google verification, GitHub secrets and Drive byte ranges. The old `https://twiceagency-portfolio.vaguacateman.workers.dev` address remains active. Social preview URLs are rewritten to the requested origin without changing the Vercel copy.
 
 Use Node.js 22 or newer:
 
@@ -105,6 +105,9 @@ npm run build
 npm test
 npm run dev
 # After authorizing the Cloudflare account:
+npm run deploy:pages
+
+# Only when backend API code or Worker configuration changes:
 npm run deploy
 ```
 
@@ -113,10 +116,12 @@ npm run deploy
 The public Google client ID, repository and branch are in `cloudflare/wrangler.jsonc`. They are not secrets.
 
 1. In Cloudflare, open **Workers & Pages > twiceagency-portfolio > Settings > Variables and Secrets**. Add `GITHUB_CONTENTS_TOKEN` as a **Secret**, restricted to this GitHub repository with Contents read/write permission. Do not put the token in source code or the chat. The admin can authenticate without this token but cannot save changes until it is configured.
-2. In the existing Google OAuth Web client, add `https://twiceagency-portfolio.vaguacateman.workers.dev` to **Authorized JavaScript origins**. Retain every existing Vercel origin so the backup admin still works. No new Google permissions or redirect callback are required for the current Google Identity Services popup flow.
+2. In the existing Google OAuth Web client, add `https://twiceagency.pages.dev` to **Authorized JavaScript origins**. Retain every existing Worker and Vercel origin so the backups still work. No new Google permissions or redirect callback are required for the current Google Identity Services popup flow. Until the new origin is authorized, use the old address for Google admin sign-in.
 3. To publish changes automatically, connect `Ivantwice99/portfolioTwiceAgency` to this Worker under **Settings > Builds**. Use branch `main`, root directory `cloudflare`, build command `npm run build`, and deploy command `npx wrangler deploy`. Use Node.js 22+ and watch the whole repository, including `assets/data/` and `assets/thumbs/`, not only `cloudflare/`.
 
-Until Git builds are connected, run `npm run deploy` from `cloudflare/` after repository updates. The GitHub YouTube statistics workflow is unchanged; its new snapshots reach Cloudflare on the next deployment. Leave the Vercel Git integration enabled.
+Pages is a Direct Upload project. Until a Pages deployment workflow is configured, run `npm run deploy:pages` from `cloudflare/` after repository updates. Connecting only the old Worker's Git build does not update the Pages catalog. The GitHub YouTube statistics workflow is unchanged; its new snapshots reach Pages on the next Pages deployment. Leave the Vercel Git integration enabled.
+
+The Pages project is configured in `cloudflare/pages/wrangler.jsonc`; its public build is `cloudflare/pages-dist/`. Do not publish the repository root. Run `npm run build`, `npm run build:pages`, then `npm test` for both hosting adapters' tests.
 
 ### Local Video Backup and YouTube Handoff
 

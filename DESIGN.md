@@ -13,6 +13,9 @@ an English/Spanish portfolio, not a redesign or a new marketing landing page.
 - `assets/data/videos.json` owns public catalog order, IDs, titles and thumbnails.
 - `api/admin/videos.js` owns Google identity verification and authorized writes.
 - `cloudflare/worker.mjs` adapts the existing server contracts for Cloudflare.
+- `cloudflare/pages-worker.mjs` serves the short Pages address and delegates API
+  requests through the existing private Worker service binding. Hosting changes
+  do not alter the visual design or administrator permissions.
 
 ## Video Interaction
 

@@ -5,12 +5,15 @@
     "build": "node build.mjs",
     "dev": "npm run build && wrangler dev",
     "deploy": "npm run build && wrangler deploy",
+    "build:pages": "node build-pages.mjs",
+    "deploy:pages": "node deploy-pages.mjs",
     "test": "node --test test/*.test.mjs"
   },
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "wrangler": "4.156.0"
   }
 }

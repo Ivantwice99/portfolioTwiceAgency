@@ -1,0 +1,9 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "twiceagency",
+  "pages_build_output_dir": "../pages-dist",
+  "compatibility_date": "2026-10-29",
+  "services": [
+    { "binding": "PORTFOLIO_API", "service": "twiceagency-portfolio" }
+  ]
+}
