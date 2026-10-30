@@ -233,6 +233,27 @@
         }
       ],
       "source": "youtube-public-snapshot"
+    },
+    {
+      "handle": "CleanShelf",
+      "publicHandle": "CleanShelf",
+      "title": "CleanShelf",
+      "url": "https://www.youtube.com/@CleanShelf",
+      "channelId": "UCJkKWzALVuCW92ejSscIUFg",
+      "thumbnail": "https://yt3.googleusercontent.com/FnFnBp0cVlzkSEuD3onn7-Y1OLH8MDlvviv0trWaxGkaueEkTtH_py5QD1_H7gyRJtCCPCWA-Hc=s160-c-k-c0x00ffffff-no-rj",
+      "statistics": {
+        "viewCount": "1274491",
+        "subscriberCount": "7320",
+        "videoCount": "45"
+      },
+      "latestTitle": "Probamos 7 cremas hidratantes con color para piel madura: la de $5 superó a la de $50",
+      "recent": {
+        "views": 0,
+        "likes": 91,
+        "sample": 6
+      },
+      "videos": [],
+      "source": "youtube-public-snapshot"
     }
   ]
 }

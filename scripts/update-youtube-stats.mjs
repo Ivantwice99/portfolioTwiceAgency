@@ -35,6 +35,12 @@ const clients = [
     publicHandle: "ImpactoGeopolitik",
     title: "Impacto Geopolitik",
     url: "https://www.youtube.com/@ImpactoGeopolitik"
+  },
+  {
+    handle: "CleanShelf",
+    publicHandle: "CleanShelf",
+    title: "CleanShelf",
+    url: "https://www.youtube.com/@CleanShelf"
   }
 ];
 

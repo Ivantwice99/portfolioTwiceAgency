@@ -91,6 +91,13 @@ const clientChannels = [
     url: "https://www.youtube.com/@impactogeopolitik",
     niche: "Geopolitica / actualidad",
     tone: "silver"
+  },
+  {
+    handle: "CleanShelf",
+    title: "CleanShelf",
+    url: "https://www.youtube.com/@CleanShelf",
+    niche: "YouTube",
+    tone: "cyan"
   }
 ];
 const smallScreenQuery = window.matchMedia("(max-width: 720px)");
