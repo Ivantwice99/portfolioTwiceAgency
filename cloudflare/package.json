@@ -1,0 +1,16 @@
+{
+  "name": "twiceagency-cloudflare",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "wrangler": "4.156.0"
+  }
+}

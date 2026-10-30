@@ -70,4 +70,54 @@ GITHUB_REPO=Ivantwice99/portfolioTwiceAgency
 GITHUB_BRANCH=main
 ```
 
-In Google Cloud, create an OAuth Web client and add your Vercel URL as an authorized JavaScript origin. The editor saves changes by committing `assets/data/videos.json` through the GitHub Contents API, then Vercel redeploys from the new commit.
+In Google Cloud, create an OAuth Web client and add the portfolio's URL as an authorized JavaScript origin. The editor saves changes by committing `assets/data/videos.json` through the GitHub Contents API. Each connected hosting provider must redeploy from the new commit.
+
+## Cloudflare Hosting
+
+Primary deployment:
+
+```text
+https://twiceagency-portfolio.vaguacateman.workers.dev
+```
+
+Keep the existing Vercel deployment active as a backup:
+
+```text
+https://portfolio-twice-agency.vercel.app
+```
+
+Cloudflare-specific files live in `cloudflare/`; the existing Vercel API handlers remain unchanged. The Cloudflare Worker reuses the admin handlers, serves only allowlisted public assets and streams Drive byte ranges using the Workers Fetch API. Social preview URLs are rewritten to the Cloudflare origin without changing the Vercel copy.
+
+Use Node.js 22 or newer:
+
+```bash
+cd cloudflare
+npm ci
+npm run build
+npm test
+npm run dev
+# After authorizing the Cloudflare account:
+npm run deploy
+```
+
+### Finish Admin Setup
+
+The public Google client ID, repository and branch are in `cloudflare/wrangler.jsonc`. They are not secrets.
+
+1. In Cloudflare, open **Workers & Pages > twiceagency-portfolio > Settings > Variables and Secrets**. Add `GITHUB_CONTENTS_TOKEN` as a **Secret**, restricted to this GitHub repository with Contents read/write permission. Do not put the token in source code or the chat. The admin can authenticate without this token but cannot save changes until it is configured.
+2. In the existing Google OAuth Web client, add `https://twiceagency-portfolio.vaguacateman.workers.dev` to **Authorized JavaScript origins**. Retain every existing Vercel origin so the backup admin still works. No new Google permissions or redirect callback are required for the current Google Identity Services popup flow.
+3. To publish changes automatically, connect `Ivantwice99/portfolioTwiceAgency` to this Worker under **Settings > Builds**. Use branch `main`, root directory `cloudflare`, build command `npm run build`, and deploy command `npx wrangler deploy`. Use Node.js 22+ and watch the whole repository, including `assets/data/` and `assets/thumbs/`, not only `cloudflare/`.
+
+Until Git builds are connected, run `npm run deploy` from `cloudflare/` after repository updates. The GitHub YouTube statistics workflow is unchanged; its new snapshots reach Cloudflare on the next deployment. Leave the Vercel Git integration enabled.
+
+### Local Video Backup and YouTube Handoff
+
+Download the current Drive originals without modifying the published video list:
+
+```bash
+node scripts/backup-portfolio-videos.mjs ../portfolio-videos
+```
+
+The folder contains numbered MP4 files and `manifest.json`, with source URLs, titles, descriptions, exact byte sizes, SHA-256 checksums and explicit YouTube upload status. Interrupted downloads resume from `.part` files. Existing completed files are checked before reuse. Originals are outside the Git repository and never uploaded with website assets.
+
+Upload to the user-selected channel **@Miotismon** with visibility **Unlisted**, not Public. Keep every `youtube.status` as `not-uploaded` until an actual upload and its visibility are verified in YouTube. Replace portfolio playback links only after the corresponding YouTube embed works; retain the Drive URL in the backup manifest.
