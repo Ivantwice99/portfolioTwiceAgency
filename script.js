@@ -1,3 +1,4 @@
+const { getYouTubeVideoId, getYouTubeEmbedUrl, getYouTubeThumbnailUrl } = TwiceVideoSources;
 const buttons = document.querySelectorAll("[data-panel-button]");
 const panels = document.querySelectorAll("[data-panel]");
 const stars = document.querySelector("[data-stars]");
@@ -147,7 +148,7 @@ const translations = {
     adminFieldId: "ID visible",
     adminFieldRatio: "Formato",
     adminFieldTone: "Color",
-    adminFieldDrive: "Link de Drive / preview",
+    adminFieldDrive: "Link de YouTube / Drive",
     adminFieldThumb: "Miniatura",
     adminFieldTitleEn: "Titulo EN",
     adminFieldDescEn: "Descripcion EN",
@@ -160,7 +161,8 @@ const translations = {
     adminMoveDown: "Bajar video",
     adminDragVideo: "Arrastrar para ordenar",
     adminOrderUpdated: "Orden actualizado. Guarda cambios para publicarlo.",
-    adminDriveHint: "Pega un enlace de Google Drive o /preview. Se usara al guardar el video.",
+    adminDriveHint: "Pega un enlace de YouTube o del archivo de Google Drive.",
+    adminFrameYouTubeHint: "Para elegir un frame de YouTube, carga la copia local del video.",
     adminFolderLinkHint: "Este es un enlace de carpeta. Pega el enlace del archivo de video individual.",
     adminChooseFrame: "Elegir frame",
     adminFramePickerKicker: "Miniatura",
@@ -288,7 +290,7 @@ const translations = {
     adminFieldId: "Visible ID",
     adminFieldRatio: "Format",
     adminFieldTone: "Color",
-    adminFieldDrive: "Drive / preview link",
+    adminFieldDrive: "YouTube / Drive video link",
     adminFieldThumb: "Thumbnail",
     adminFieldTitleEn: "Title EN",
     adminFieldDescEn: "Description EN",
@@ -301,7 +303,8 @@ const translations = {
     adminMoveDown: "Move video down",
     adminDragVideo: "Drag to reorder",
     adminOrderUpdated: "Order updated. Save changes to publish it.",
-    adminDriveHint: "Paste a Google Drive link or /preview. It will be used when you save the video.",
+    adminDriveHint: "Paste a YouTube link or an individual Google Drive video link.",
+    adminFrameYouTubeHint: "Load the local video copy to choose a frame for a YouTube video.",
     adminFolderLinkHint: "This is a folder link. Paste the link to the individual video file.",
     adminChooseFrame: "Choose frame",
     adminFramePickerKicker: "Thumbnail",
@@ -651,6 +654,8 @@ function getLocalizedVideoText(video, field) {
 
 function getVideoPreviewUrl(video) {
   const rawUrl = video.previewUrl || video.driveUrl || "";
+  const youtubeUrl = getYouTubeEmbedUrl(rawUrl);
+  if (youtubeUrl) return youtubeUrl;
   const driveId = getDriveFileId(rawUrl);
   const resourceKey = getDriveResourceKey(rawUrl);
   if (driveId) {
@@ -672,6 +677,8 @@ function getVideoThumbnailUrl(video) {
   if (video.thumbnailDataUrl) return video.thumbnailDataUrl;
   if (isUsableThumbnailUrl(video.thumbnailUrl)) return String(video.thumbnailUrl).trim();
   const rawUrl = video.previewUrl || video.driveUrl || "";
+  const youtubeThumbnail = getYouTubeThumbnailUrl(rawUrl);
+  if (youtubeThumbnail) return youtubeThumbnail;
   const driveId = getDriveFileId(rawUrl);
   const resourceKey = getDriveResourceKey(rawUrl);
   return driveId
@@ -1059,6 +1066,11 @@ function openAdminFramePicker(index) {
   adminFramePicker.setAttribute("aria-hidden", "false");
   adminFrameVideo.crossOrigin = "anonymous";
   adminFrameVideo.poster = getVideoThumbnailUrl(video);
+  if (getYouTubeVideoId(video.previewUrl)) {
+    setAdminFrameStatus("adminFrameYouTubeHint");
+    adminFramePanel?.focus();
+    return;
+  }
   if (isDriveFolderUrl(video.previewUrl)) {
     setAdminFrameStatus("adminFolderLinkHint", "error");
     adminFramePanel?.focus();
@@ -2198,7 +2210,7 @@ const restoreAmbientAfterVideo = () => {
 };
 
 const syncEmbedScale = () => {
-  if (!modalScreen || !smallScreenQuery.matches || !modalScreen.classList.contains("has-embed")) {
+  if (!modalScreen || !smallScreenQuery.matches || !modalScreen.classList.contains("has-embed") || modalScreen.classList.contains("has-youtube")) {
     modalScreen?.style.removeProperty("--embed-scale");
     return;
   }
@@ -2210,17 +2222,19 @@ const syncEmbedScale = () => {
 
 const resetVideoSurfaces = () => {
   currentVideoFallback = "";
-  modalScreen?.classList.remove("has-video", "has-native", "has-embed");
+  modalScreen?.classList.remove("has-video", "has-native", "has-embed", "has-youtube");
   modalScreen?.style.removeProperty("--embed-scale");
 
   if (videoPlayer) {
     videoPlayer.pause();
+    videoPlayer.hidden = true;
     videoPlayer.removeAttribute("src");
     videoPlayer.removeAttribute("poster");
     videoPlayer.load();
   }
 
   if (videoFrame) {
+    videoFrame.hidden = true;
     videoFrame.src = "";
   }
 };
@@ -2228,13 +2242,26 @@ const resetVideoSurfaces = () => {
 const showEmbedVideo = (previewUrl) => {
   if (!videoFrame || !previewUrl) return;
 
+  if (videoPlayer) videoPlayer.hidden = true;
+  videoFrame.hidden = false;
   modalScreen?.classList.remove("has-native");
   modalScreen?.classList.add("has-video", "has-embed");
-  videoFrame.src = withAutoplay(previewUrl);
+  const youtubeUrl = getYouTubeEmbedUrl(previewUrl);
+  modalScreen?.classList.toggle("has-youtube", Boolean(youtubeUrl));
+  if (youtubeUrl) {
+    const url = new URL(youtubeUrl);
+    url.searchParams.set("autoplay", "1");
+    url.searchParams.set("playsinline", "1");
+    url.searchParams.set("rel", "0");
+    videoFrame.src = url.toString();
+  } else {
+    videoFrame.src = withAutoplay(previewUrl);
+  }
   window.requestAnimationFrame(syncEmbedScale);
 };
 
 const prewarmVideoPreview = (previewUrl) => {
+  if (getYouTubeVideoId(previewUrl)) return;
   if (!previewUrl || prefetchedVideoPreviews.has(previewUrl)) return;
   prefetchedVideoPreviews.add(previewUrl);
   const sourceUrl = getDriveDownloadUrl(previewUrl) || (isDirectVideoUrl(previewUrl) ? previewUrl : "");
@@ -2271,6 +2298,7 @@ const openVideo = (title, previewUrl, ratio, thumbnailUrl = "") => {
 
   if (videoPlayer && sourceUrl) {
     currentVideoFallback = previewUrl;
+    videoPlayer.hidden = false;
     videoPlayer.preload = "auto";
     if (thumbnailUrl) videoPlayer.poster = thumbnailUrl;
     videoPlayer.title = copy.videoPreviewLabel;

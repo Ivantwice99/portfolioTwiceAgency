@@ -23,11 +23,9 @@
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="preload" href="assets/audio/final-fantasy-menu-click.mp3" as="audio">
     <link rel="preload" href="assets/audio/ambient-loop.mp3" as="audio" type="audio/mpeg">
-    <link rel="preconnect" href="https://drive.google.com">
-    <link rel="preconnect" href="https://drive.usercontent.google.com">
-    <link rel="dns-prefetch" href="//drive.google.com">
-    <link rel="dns-prefetch" href="//drive.usercontent.google.com">
-    <link rel="stylesheet" href="styles.css?v=video-native-v1">
+    <link rel="preconnect" href="https://www.youtube-nocookie.com">
+    <link rel="preconnect" href="https://i.ytimg.com">
+    <link rel="stylesheet" href="styles.css?v=youtube-portfolio-v1">
   </head>
   <body>
     <div class="scene" aria-hidden="true">
@@ -252,8 +250,8 @@
           </svg>
         </button>
         <div class="modal-screen">
-          <video data-video-player title="Video preview" controls playsinline preload="metadata" controlslist="nodownload noremoteplayback"></video>
-          <iframe data-video-frame title="Video preview" loading="lazy" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          <video data-video-player title="Video preview" controls playsinline preload="metadata" controlslist="nodownload noremoteplayback" hidden></video>
+          <iframe data-video-frame title="Video preview" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen hidden></iframe>
           <span class="play-ring" aria-hidden="true"></span>
         </div>
       </section>
@@ -356,6 +354,7 @@
     </div>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="script.js?v=clients-cleanshelf-v1"></script>
+    <script src="assets/video-sources.js?v=youtube-portfolio-v1"></script>
+    <script src="script.js?v=youtube-portfolio-v1"></script>
   </body>
 </html>

@@ -1,4 +1,5 @@
 const { webcrypto } = require("node:crypto");
+const { getYouTubeEmbedUrl, getYouTubeThumbnailUrl } = require("../../assets/video-sources.js");
 
 const ADMIN_EMAIL = "vaguacateman@gmail.com";
 const DEFAULT_REPO = "Ivantwice99/portfolioTwiceAgency";
@@ -90,6 +91,8 @@ function getDriveResourceKey(url = "") {
 }
 
 function normalizePreviewUrl(value = "") {
+  const youtubeUrl = getYouTubeEmbedUrl(value);
+  if (youtubeUrl) return youtubeUrl;
   if (isDriveFolderUrl(value)) return "";
   const driveId = getDriveFileId(value);
   const resourceKey = getDriveResourceKey(value);
@@ -102,6 +105,9 @@ function normalizePreviewUrl(value = "") {
 function normalizeThumbnailUrl(value = "", previewUrl = "") {
   const thumbnail = String(value || "").trim();
   if (thumbnail && !/drive\.google\.com\/thumbnail\?id=(?:&|$)/i.test(thumbnail)) return thumbnail;
+
+  const youtubeThumbnail = getYouTubeThumbnailUrl(previewUrl);
+  if (youtubeThumbnail) return youtubeThumbnail;
 
   const driveId = getDriveFileId(previewUrl);
   const resourceKey = getDriveResourceKey(previewUrl);

@@ -55,6 +55,12 @@ For automated premium stats, add the SocialBlade or YouTube keys as GitHub repos
 
 The Videos panel reads `assets/data/videos.json`.
 
+The published catalog uses ten YouTube videos from @Miotismon. Crypto & Tech Reel and Anime & Gaming are intentionally omitted until uploaded. YouTube short, watch, shorts, live and embed links are normalized by `assets/video-sources.js`, shared by the browser and admin API. The public player uses YouTube's privacy-enhanced embed, with responsive 16:9 sizing and YouTube thumbnails. Drive and direct-file playback remain supported for future admin entries.
+
+YouTube videos must be viewable by visitors and allow embedding. Unlisted videos work; private videos do not. Changing a YouTube video's visibility or embedding settings is managed in YouTube, not by this website.
+
+Run the video integration checks with `node --test scripts/test-video-sources.cjs`. The original Drive catalog is preserved in Git history and in the local `portfolio-videos/videos-drive-backup-before-youtube.json` backup. Selecting an arbitrary thumbnail frame for a YouTube video requires its local MP4 copy; the editor does not attempt to read pixels from a cross-origin YouTube player.
+
 The admin editor is protected by Google Sign-In and only allows:
 
 ```text

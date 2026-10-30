@@ -135,6 +135,14 @@ test("authenticated save retains video normalization and writes to GitHub server
   assert.equal(result.videos[0].previewUrl, "https://drive.google.com/file/d/drive_id/preview");
   assert.equal(writes.length, 1);
   assert.equal(JSON.parse(Buffer.from(writes[0].content, "base64").toString()).updatedBy, "vaguacateman@gmail.com");
+  const youtube = await worker.fetch(adminRequest(token(), {
+    action: "save",
+    videos: [{ ...video, previewUrl: "https://youtu.be/2kxwN11-hXs" }]
+  }), {});
+  assert.equal(youtube.status, 200);
+  const youtubeData = await youtube.json();
+  assert.equal(youtubeData.videos[0].previewUrl, "https://www.youtube-nocookie.com/embed/2kxwN11-hXs");
+  assert.equal(youtubeData.videos[0].thumbnailUrl, "https://i.ytimg.com/vi/2kxwN11-hXs/hqdefault.jpg");
 });
 
 test("unknown API paths are JSON 404, static files use ASSETS", async () => {
