@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-30T02:44:48.576Z",
+  "updatedAt": "2026-11-03T07:57:33Z",
   "updatedBy": "vaguacateman@gmail.com",
   "videos": [
     {
@@ -170,6 +170,74 @@
       "description": {
         "en": "Police bodycam editing with Spanish subtitles, contextual captions, and documentary sequencing.",
         "es": "Edicion de bodycam policial con subtitulos en espanol, contexto y narrativa documental."
+      }
+    },
+    {
+      "uid": "example-13",
+      "code": "MDV-02",
+      "ratio": "9:16",
+      "tone": "cyan",
+      "quality": "original",
+      "previewUrl": "https://www.youtube-nocookie.com/embed/zupVKV4FXj8",
+      "thumbnailUrl": "https://i.ytimg.com/vi/zupVKV4FXj8/hqdefault.jpg",
+      "title": {
+        "en": "Crypto & Tech Reel",
+        "es": "Reel de cripto y tecnologia"
+      },
+      "description": {
+        "en": "Vertical reel about crypto and technology.",
+        "es": "Reel vertical sobre criptomonedas y tecnologia."
+      }
+    },
+    {
+      "uid": "example-14",
+      "code": "MDV-10",
+      "ratio": "16:9",
+      "tone": "gold",
+      "quality": "original",
+      "previewUrl": "https://www.youtube-nocookie.com/embed/Riis8QOCy4I",
+      "thumbnailUrl": "https://i.ytimg.com/vi/Riis8QOCy4I/hqdefault.jpg",
+      "title": {
+        "en": "Anime & Gaming Commentary",
+        "es": "Comentario de anime y videojuegos"
+      },
+      "description": {
+        "en": "Anime and gaming commentary video editing.",
+        "es": "Edicion de video de comentarios sobre anime y videojuegos."
+      }
+    },
+    {
+      "uid": "example-15",
+      "code": "MDV-13",
+      "ratio": "16:9",
+      "tone": "rose",
+      "quality": "original",
+      "previewUrl": "https://www.youtube-nocookie.com/embed/mo5cyXiOYwc",
+      "thumbnailUrl": "https://i.ytimg.com/vi/mo5cyXiOYwc/hqdefault.jpg",
+      "title": {
+        "en": "Adaptation Test P1",
+        "es": "Prueba de adaptacion P1"
+      },
+      "description": {
+        "en": "Adaptation test video, part one.",
+        "es": "Video de prueba de adaptacion, parte uno."
+      }
+    },
+    {
+      "uid": "example-16",
+      "code": "MDV-14",
+      "ratio": "16:9",
+      "tone": "silver",
+      "quality": "original",
+      "previewUrl": "https://www.youtube-nocookie.com/embed/xXO3K3DJgow",
+      "thumbnailUrl": "https://i.ytimg.com/vi/xXO3K3DJgow/hqdefault.jpg",
+      "title": {
+        "en": "Adaptation Test 01",
+        "es": "Prueba de adaptacion 01"
+      },
+      "description": {
+        "en": "Adaptation test video.",
+        "es": "Video de prueba de adaptacion."
       }
     }
   ]
