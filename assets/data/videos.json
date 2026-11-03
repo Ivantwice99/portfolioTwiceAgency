@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-03T07:57:33Z",
+  "updatedAt": "2026-11-03T11:11:41Z",
   "updatedBy": "vaguacateman@gmail.com",
   "videos": [
     {
@@ -238,6 +238,23 @@
       "description": {
         "en": "Adaptation test video.",
         "es": "Video de prueba de adaptacion."
+      }
+    },
+    {
+      "uid": "example-17",
+      "code": "MDV-15",
+      "ratio": "16:9",
+      "tone": "gold",
+      "quality": "original",
+      "previewUrl": "https://www.youtube-nocookie.com/embed/u1Y7i1a__OE",
+      "thumbnailUrl": "https://i.ytimg.com/vi/u1Y7i1a__OE/hqdefault.jpg",
+      "title": {
+        "en": "Zucaritas Desaparecio Test",
+        "es": "Prueba: Zucaritas desaparecio"
+      },
+      "description": {
+        "en": "Video editing test featuring a Zucaritas-themed concept.",
+        "es": "Video de prueba de edicion con un concepto inspirado en Zucaritas."
       }
     }
   ]

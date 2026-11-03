@@ -55,7 +55,7 @@ For automated premium stats, add the SocialBlade or YouTube keys as GitHub repos
 
 The Videos panel reads `assets/data/videos.json`.
 
-The published catalog uses fourteen YouTube videos from @Miotismon, including Crypto & Tech Reel, Anime & Gaming Commentary, and two adaptation tests. The Crypto & Tech Short uses a vertical 9:16 tile; other entries retain their 16:9 layout. YouTube short, watch, shorts, live and embed links are normalized by `assets/video-sources.js`, shared by the browser and admin API. The public player uses YouTube's privacy-enhanced embed and YouTube thumbnails. Drive and direct-file playback remain supported for future admin entries.
+The published catalog uses fifteen YouTube videos from @Miotismon, including Crypto & Tech Reel, Anime & Gaming Commentary, two adaptation tests, and Zucaritas Desaparecio Test. The Crypto & Tech Short uses a vertical 9:16 tile; other entries retain their 16:9 layout. YouTube short, watch, shorts, live and embed links are normalized by `assets/video-sources.js`, shared by the browser and admin API. The public player uses YouTube's privacy-enhanced embed and YouTube thumbnails. Drive and direct-file playback remain supported for future admin entries.
 
 YouTube videos must be viewable by visitors and allow embedding. Unlisted videos work; private videos do not. Changing a YouTube video's visibility or embedding settings is managed in YouTube, not by this website.
 

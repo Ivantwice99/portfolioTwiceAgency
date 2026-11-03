@@ -7,7 +7,7 @@ const sources = require("../assets/video-sources.js");
 const root = join(__dirname, "..");
 const source = readFileSync(join(root, "script.js"), "utf8");
 const catalog = JSON.parse(readFileSync(join(root, "assets/data/videos.json"), "utf8"));
-const expectedIds = ["2kxwN11-hXs", "rDXvuOj53Ms", "IGKtu24EW5U", "cxMmPfhKSGI", "fNXEVE_PI98", "Qzw_ZK4sYVg", "KM3Ozq-2M0M", "0VinlvUBFIQ", "5YBYcydbGqs", "Qfcn8ZPDFO0", "zupVKV4FXj8", "Riis8QOCy4I", "mo5cyXiOYwc", "xXO3K3DJgow"];
+const expectedIds = ["2kxwN11-hXs", "rDXvuOj53Ms", "IGKtu24EW5U", "cxMmPfhKSGI", "fNXEVE_PI98", "Qzw_ZK4sYVg", "KM3Ozq-2M0M", "0VinlvUBFIQ", "5YBYcydbGqs", "Qfcn8ZPDFO0", "zupVKV4FXj8", "Riis8QOCy4I", "mo5cyXiOYwc", "xXO3K3DJgow", "u1Y7i1a__OE"];
 
 test("YouTube short, watch, embed, shorts and live links normalize consistently", () => {
   for (const value of [
@@ -29,13 +29,13 @@ test("YouTube parser rejects unrelated hosts, malformed IDs and unsafe protocols
   }
 });
 
-test("catalog contains the ten existing videos and four newly requested videos in order", () => {
-  assert.equal(catalog.videos.length, 14);
+test("catalog contains the existing videos and five newly requested videos in order", () => {
+  assert.equal(catalog.videos.length, 15);
   assert.deepEqual(catalog.videos.map(video => sources.getYouTubeVideoId(video.previewUrl)), expectedIds);
-  assert.equal(new Set(catalog.videos.map(video => video.code)).size, 14);
-  assert.equal(new Set(catalog.videos.map(video => video.uid)).size, 14);
+  assert.equal(new Set(catalog.videos.map(video => video.code)).size, 15);
+  assert.equal(new Set(catalog.videos.map(video => video.uid)).size, 15);
   assert.ok(!catalog.videos.some(video => ["example-01", "example-02"].includes(video.uid)));
-  assert.deepEqual(catalog.videos.slice(-4).map(video => video.code), ["MDV-02", "MDV-10", "MDV-13", "MDV-14"]);
+  assert.deepEqual(catalog.videos.slice(-5).map(video => video.code), ["MDV-02", "MDV-10", "MDV-13", "MDV-14", "MDV-15"]);
   assert.equal(catalog.videos[10].ratio, "9:16");
   for (const video of catalog.videos) {
     assert.equal(video.thumbnailUrl, sources.getYouTubeThumbnailUrl(video.previewUrl));
