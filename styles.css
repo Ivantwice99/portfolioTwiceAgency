@@ -1344,6 +1344,19 @@ h3 {
   text-underline-offset: 0.2em;
 }
 
+.contact-email-address {
+  margin: 0 1rem 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.contact-email-address a {
+  color: var(--cyan);
+  font-weight: 700;
+  text-underline-offset: 0.2em;
+}
+
 .mini-form .form-honey {
   position: absolute;
   left: -100vw;
