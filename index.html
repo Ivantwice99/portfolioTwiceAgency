@@ -228,15 +228,19 @@
             </a>
           </div>
 
-          <form class="mini-form" data-contact-form>
+          <form class="mini-form" data-contact-form action="https://formsubmit.co/contactotwice99@gmail.com" method="POST">
             <input name="name" type="text" autocomplete="name" placeholder="Name" data-i18n-placeholder="namePlaceholder" required>
             <input name="project" type="text" autocomplete="off" placeholder="Project" data-i18n-placeholder="projectPlaceholder">
-            <input name="reply" type="email" autocomplete="email" inputmode="email" placeholder="Your email" data-i18n-placeholder="replyPlaceholder" required>
+            <input name="email" type="email" autocomplete="email" inputmode="email" placeholder="Your email" data-i18n-placeholder="replyPlaceholder" required>
             <input class="form-honey" name="_honey" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <input type="hidden" name="_replyto" data-contact-replyto>
+            <input type="hidden" name="_subject" data-contact-subject value="Video project">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" data-contact-next value="https://twiceagency.pages.dev/?contact=sent#contacto">
             <textarea name="message" rows="4" placeholder="Message" data-i18n-placeholder="messagePlaceholder" required></textarea>
             <button class="submit-button" type="submit" data-i18n="send">Send</button>
             <p class="form-status" data-form-status role="status" aria-live="polite"></p>
-            <a class="form-email-fallback" data-form-email-fallback href="mailto:contactotwice99@gmail.com" hidden data-i18n="emailDraftAction">Open email draft</a>
           </form>
           <p class="contact-email-address"><a href="mailto:contactotwice99@gmail.com">contactotwice99@gmail.com</a></p>
         </div>

@@ -43,7 +43,9 @@ const adminFrameStatus = document.querySelector("[data-admin-frame-status]");
 const adminFrameCloseButtons = document.querySelectorAll("[data-admin-frame-close], [data-admin-frame-cancel]");
 const closeVideoButtons = document.querySelectorAll("[data-close-video]");
 const contactForm = document.querySelector("[data-contact-form]");
-const contactEmailFallback = document.querySelector("[data-form-email-fallback]");
+const contactReplyTo = document.querySelector("[data-contact-replyto]");
+const contactSubject = document.querySelector("[data-contact-subject]");
+const contactNext = document.querySelector("[data-contact-next]");
 const contactLinks = document.querySelectorAll("[data-contact-action]");
 const formStatus = document.querySelector("[data-form-status]");
 const contactSubmit = contactForm?.querySelector("button[type=\"submit\"]");
@@ -251,10 +253,6 @@ const translations = {
     formInvalidEmail: "Escribe un email valido.",
     formSending: "Enviando mensaje...",
     formSent: "Mensaje enviado.",
-    formNeedsActivation: "Revisa contactotwice99@gmail.com y activa FormSubmit para recibir mensajes.",
-    formFallbackMailto: "Abrimos tu correo con el mensaje listo para enviar.",
-    emailDraftAction: "Abrir borrador en tu correo",
-    formFailed: "No se pudo enviar automaticamente. Usa Correo o WhatsApp.",
     projectFallback: "Sin especificar",
     mailSubject: "Proyecto de video",
     mailName: "Nombre",
@@ -398,10 +396,6 @@ const translations = {
     formInvalidEmail: "Enter a valid email.",
     formSending: "Sending message...",
     formSent: "Message sent.",
-    formNeedsActivation: "Check contactotwice99@gmail.com and activate FormSubmit to receive messages.",
-    formFallbackMailto: "Opening your email with the message ready to send.",
-    emailDraftAction: "Open email draft",
-    formFailed: "Could not send automatically. Use Email or WhatsApp.",
     projectFallback: "Not specified",
     mailSubject: "Video project",
     mailName: "Name",
@@ -1389,20 +1383,6 @@ const getContactTarget = () => ({
   phone: contactVault.phone.join("")
 });
 
-const buildMailtoUrl = ({ name, project, reply, message }, copy) => {
-  const contact = getContactTarget();
-  const subject = `${copy.mailSubject}: ${project || copy.projectFallback}`;
-  const body = [
-    `${copy.mailName}: ${name}`,
-    `${copy.mailProject}: ${project || copy.projectFallback}`,
-    `${copy.mailReply}: ${reply || copy.projectFallback}`,
-    "",
-    message
-  ].join("\n");
-
-  return `mailto:${contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-};
-
 const setFormStatus = (message = "", tone = "neutral") => {
   if (!formStatus) return;
   formStatus.textContent = message;
@@ -1411,44 +1391,6 @@ const setFormStatus = (message = "", tone = "neutral") => {
 };
 
 const isValidEmail = (value = "") => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-
-const sendContactRequest = async ({ name, project, reply, message }, copy) => {
-  const contact = getContactTarget();
-  const payload = {
-    name,
-    project,
-    reply: reply || copy.projectFallback,
-    email: reply || "",
-    message,
-    _replyto: reply || "",
-    _subject: `${copy.mailSubject}: ${project}`,
-    _template: "table",
-    _captcha: "false",
-    _url: window.location.href
-  };
-
-  const response = await fetch(`https://formsubmit.co/ajax/${contact.email}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json"
-    },
-    body: JSON.stringify(payload)
-  });
-  const result = await response.json().catch(() => ({}));
-  const resultMessage = String(result.message || "");
-  const activationRequired = /activate|activation|confirm|verify|verification/i.test(resultMessage);
-
-  if (!response.ok || result.success === false || result.success === "false") {
-    if (activationRequired) {
-      return { ok: true, activationRequired };
-    }
-
-    throw new Error(result.message || "contact-send-failed");
-  }
-
-  return { ok: true, activationRequired: false };
-};
 
 const setAmbientToggleState = () => {
   if (!ambientToggle) return;
@@ -2421,7 +2363,7 @@ window.addEventListener("keydown", (event) => {
 
 window.addEventListener("resize", syncEmbedScale, { passive: true });
 
-contactForm?.addEventListener("submit", async (event) => {
+contactForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   playClick(2);
   const copy = translations[currentLanguage] || translations.en;
@@ -2429,51 +2371,35 @@ contactForm?.addEventListener("submit", async (event) => {
   const data = new FormData(contactForm);
   const name = data.get("name")?.toString().trim();
   const project = data.get("project")?.toString().trim() || copy.projectFallback;
-  const reply = data.get("reply")?.toString().trim();
+  const reply = data.get("email")?.toString().trim();
   const message = data.get("message")?.toString().trim();
   const honey = data.get("_honey")?.toString().trim();
 
   if (honey) {
     contactForm.reset();
-    setFormStatus(copy.formSent, "success");
     return;
   }
 
   if (!name || !reply || !message) {
-    if (contactEmailFallback) contactEmailFallback.hidden = true;
     setFormStatus(copy.formIncomplete, "error");
     return;
   }
 
   if (!isValidEmail(reply)) {
-    if (contactEmailFallback) contactEmailFallback.hidden = true;
     setFormStatus(copy.formInvalidEmail, "error");
     return;
   }
 
   setFormStatus(copy.formSending);
-  if (contactEmailFallback) contactEmailFallback.hidden = true;
   if (contactSubmit) contactSubmit.disabled = true;
-
-  try {
-    const result = await sendContactRequest({ name, project, reply, message }, copy);
-    if (result.activationRequired) {
-      if (contactEmailFallback) {
-        contactEmailFallback.href = buildMailtoUrl({ name, project, reply, message }, copy);
-        contactEmailFallback.hidden = false;
-      }
-      setFormStatus(copy.formNeedsActivation, "error");
-    } else {
-      contactForm.reset();
-      setFormStatus(copy.formSent, "success");
-    }
-  } catch (error) {
-    if (contactEmailFallback) {
-      contactEmailFallback.href = buildMailtoUrl({ name, project, reply, message }, copy);
-      contactEmailFallback.hidden = false;
-    }
-    setFormStatus(copy.formFailed, "error");
-  } finally {
-    if (contactSubmit) contactSubmit.disabled = false;
-  }
+  if (contactReplyTo) contactReplyTo.value = reply;
+  if (contactSubject) contactSubject.value = `${copy.mailSubject}: ${project}`;
+  if (contactNext) contactNext.value = `${window.location.origin}/?contact=sent#contacto`;
+  contactForm.submit();
 });
+
+if (new URLSearchParams(window.location.search).get("contact") === "sent") {
+  const copy = translations[currentLanguage] || translations.en;
+  setFormStatus(copy.formSent, "success");
+  window.history.replaceState(null, "", `${window.location.pathname}#contacto`);
+}
