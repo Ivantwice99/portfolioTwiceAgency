@@ -43,6 +43,7 @@ const adminFrameStatus = document.querySelector("[data-admin-frame-status]");
 const adminFrameCloseButtons = document.querySelectorAll("[data-admin-frame-close], [data-admin-frame-cancel]");
 const closeVideoButtons = document.querySelectorAll("[data-close-video]");
 const contactForm = document.querySelector("[data-contact-form]");
+const contactEmailFallback = document.querySelector("[data-form-email-fallback]");
 const contactLinks = document.querySelectorAll("[data-contact-action]");
 const formStatus = document.querySelector("[data-form-status]");
 const contactSubmit = contactForm?.querySelector("button[type=\"submit\"]");
@@ -252,6 +253,7 @@ const translations = {
     formSent: "Mensaje enviado.",
     formNeedsActivation: "Revisa vaguacateman@gmail.com y activa FormSubmit para recibir mensajes.",
     formFallbackMailto: "Abrimos tu correo con el mensaje listo para enviar.",
+    emailDraftAction: "Abrir borrador en tu correo",
     formFailed: "No se pudo enviar automaticamente. Usa Correo o WhatsApp.",
     projectFallback: "Sin especificar",
     mailSubject: "Proyecto de video",
@@ -398,6 +400,7 @@ const translations = {
     formSent: "Message sent.",
     formNeedsActivation: "Check vaguacateman@gmail.com and activate FormSubmit to receive messages.",
     formFallbackMailto: "Opening your email with the message ready to send.",
+    emailDraftAction: "Open email draft",
     formFailed: "Could not send automatically. Use Email or WhatsApp.",
     projectFallback: "Not specified",
     mailSubject: "Video project",
@@ -1360,6 +1363,7 @@ const setLanguage = (language) => {
   contactLinks.forEach((link) => {
     const isEmail = link.dataset.contactAction === "email";
     link.setAttribute("aria-label", isEmail ? copy.contactEmailAria : copy.contactWhatsappAria);
+    if (isEmail) link.href = `mailto:${getContactTarget().email}`;
   });
 
   document.querySelectorAll("[data-i18n]").forEach((element) => {
@@ -2102,17 +2106,12 @@ document.addEventListener("visibilitychange", () => {
 
 contactLinks.forEach((link) => {
   link.addEventListener("click", (event) => {
+    if (link.dataset.contactAction !== "whatsapp") return;
     event.preventDefault();
     const contact = getContactTarget();
     const copy = translations[currentLanguage] || translations.en;
-
-    if (link.dataset.contactAction === "whatsapp") {
-      const url = `https://wa.me/${contact.phone}?text=${encodeURIComponent(copy.whatsAppMessage)}`;
-      window.open(url, "_blank", "noopener,noreferrer");
-      return;
-    }
-
-    window.location.href = `mailto:${contact.email}`;
+    const url = `https://wa.me/${contact.phone}?text=${encodeURIComponent(copy.whatsAppMessage)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   });
 });
 
@@ -2439,25 +2438,39 @@ contactForm?.addEventListener("submit", async (event) => {
   }
 
   if (!name || !reply || !message) {
+    if (contactEmailFallback) contactEmailFallback.hidden = true;
     setFormStatus(copy.formIncomplete, "error");
     return;
   }
 
   if (!isValidEmail(reply)) {
+    if (contactEmailFallback) contactEmailFallback.hidden = true;
     setFormStatus(copy.formInvalidEmail, "error");
     return;
   }
 
   setFormStatus(copy.formSending);
+  if (contactEmailFallback) contactEmailFallback.hidden = true;
   if (contactSubmit) contactSubmit.disabled = true;
 
   try {
     const result = await sendContactRequest({ name, project, reply, message }, copy);
-    contactForm.reset();
-    setFormStatus(result.activationRequired ? copy.formNeedsActivation : copy.formSent, "success");
+    if (result.activationRequired) {
+      if (contactEmailFallback) {
+        contactEmailFallback.href = buildMailtoUrl({ name, project, reply, message }, copy);
+        contactEmailFallback.hidden = false;
+      }
+      setFormStatus(copy.formNeedsActivation, "error");
+    } else {
+      contactForm.reset();
+      setFormStatus(copy.formSent, "success");
+    }
   } catch (error) {
-    window.location.href = buildMailtoUrl({ name, project, reply, message }, copy);
-    setFormStatus(copy.formFallbackMailto || copy.formFailed, "error");
+    if (contactEmailFallback) {
+      contactEmailFallback.href = buildMailtoUrl({ name, project, reply, message }, copy);
+      contactEmailFallback.hidden = false;
+    }
+    setFormStatus(copy.formFailed, "error");
   } finally {
     if (contactSubmit) contactSubmit.disabled = false;
   }

@@ -1337,6 +1337,13 @@ h3 {
   text-shadow: 0 0 14px rgba(255, 107, 127, 0.32);
 }
 
+.form-email-fallback {
+  justify-self: start;
+  color: var(--cyan);
+  font-weight: 800;
+  text-underline-offset: 0.2em;
+}
+
 .mini-form .form-honey {
   position: absolute;
   left: -100vw;
