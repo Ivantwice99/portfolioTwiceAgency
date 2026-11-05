@@ -1414,7 +1414,7 @@ const isValidEmail = (value = "") => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 const sendContactRequest = async ({ name, project, reply, message }, copy) => {
   const contact = getContactTarget();
-  const payload = new URLSearchParams({
+  const payload = {
     name,
     project,
     reply: reply || copy.projectFallback,
@@ -1423,15 +1423,17 @@ const sendContactRequest = async ({ name, project, reply, message }, copy) => {
     _replyto: reply || "",
     _subject: `${copy.mailSubject}: ${project}`,
     _template: "table",
-    _captcha: "false"
-  });
+    _captcha: "false",
+    _url: window.location.href
+  };
 
   const response = await fetch(`https://formsubmit.co/ajax/${contact.email}`, {
     method: "POST",
     headers: {
+      "Content-Type": "application/json",
       Accept: "application/json"
     },
-    body: payload
+    body: JSON.stringify(payload)
   });
   const result = await response.json().catch(() => ({}));
   const resultMessage = String(result.message || "");
