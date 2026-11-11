@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-11T06:33:02.784Z",
+  "updatedAt": "2026-11-11T19:39:38.294Z",
   "source": "youtube-public-snapshot",
   "channels": [
     {
@@ -12,50 +12,50 @@
       "statistics": {
         "viewCount": "10106982",
         "subscriberCount": "19200",
-        "videoCount": "321"
+        "videoCount": "322"
       },
-      "latestTitle": "Se Negó a Salir de la Propiedad tras la Orden Judicial (¡PÉSIMA IDEA!)",
+      "latestTitle": "KAREN Fuera de Control Amenazó a los Empleados y Terminó ESPOSADA",
       "recent": {
         "views": 0,
-        "likes": 925,
+        "likes": 857,
         "sample": 6
       },
       "videos": [
         {
+          "id": "8mnXevmoMv0",
+          "title": "KAREN Fuera de Control Amenazó a los Empleados y Terminó ESPOSADA",
+          "viewCount": "0",
+          "likeCount": "12"
+        },
+        {
           "id": "c093yyLjMcg",
           "title": "Se Negó a Salir de la Propiedad tras la Orden Judicial (¡PÉSIMA IDEA!)",
           "viewCount": "0",
-          "likeCount": "101"
+          "likeCount": "105"
         },
         {
           "id": "U7cQW1qCuEA",
           "title": "'Abogados de TikTok' Desafían a los Oficiales en una Parada Policial (¡PÉSIMA IDEA!)",
           "viewCount": "0",
-          "likeCount": "163"
+          "likeCount": "166"
         },
         {
           "id": "zvSlOJ2KaSI",
           "title": "Creyó Saber Más que los Oficiales Durante una Detención de Tránsito",
           "viewCount": "0",
-          "likeCount": "198"
+          "likeCount": "200"
         },
         {
           "id": "5kosYgfpKqE",
           "title": "Se NEGARON a PAGAR la Cuenta Antes de Subir al Avión… y les SALIÓ MUY CARO (¡Pésima Idea!)",
           "viewCount": "0",
-          "likeCount": "223"
+          "likeCount": "226"
         },
         {
           "id": "dkgenklXEWI",
           "title": "La Mentira Más Obvia Captada en Cámara Policial (Karma Instantaneo)",
           "viewCount": "0",
           "likeCount": "148"
-        },
-        {
-          "id": "zJotVc5Tan8",
-          "title": "Vecinos Alertan al 911 en SECRETO y la Intervención Policial lo Cambia Todo",
-          "viewCount": "0",
-          "likeCount": "92"
         }
       ],
       "source": "youtube-public-snapshot"
@@ -68,7 +68,7 @@
       "channelId": "UCEMXB9t_RqxXjSmWER1cPsw",
       "thumbnail": "https://yt3.ggpht.com/LRf1OW0txRPzsAg43UU2Aqc-6kXxjnvdoF38itrocglVhWTx--j3jiKOXlb_D35PjnMO9QT2FN1Mfw=s1600-c-fcrop64=1,00002000ffffdfff-rw-nd-v1",
       "statistics": {
-        "viewCount": "6507271",
+        "viewCount": "6510034",
         "subscriberCount": "133000",
         "videoCount": "99"
       },
@@ -184,7 +184,7 @@
       "channelId": "UCmNBIEv7uz_zDnZkGfxwasQ",
       "thumbnail": "https://yt3.googleusercontent.com/Qb1-MNczZat1HZ379iIQdB-rL0rButnN8jTGibddWg2nSftYd3gBqng2Uefjn9GEWKux1G1Y=s160-c-k-c0x00ffffff-no-rj",
       "statistics": {
-        "viewCount": "40907307",
+        "viewCount": "40958499",
         "subscriberCount": "96700",
         "videoCount": "373"
       },
@@ -242,17 +242,23 @@
       "channelId": "UCJkKWzALVuCW92ejSscIUFg",
       "thumbnail": "https://yt3.googleusercontent.com/FnFnBp0cVlzkSEuD3onn7-Y1OLH8MDlvviv0trWaxGkaueEkTtH_py5QD1_H7gyRJtCCPCWA-Hc=s160-c-k-c0x00ffffff-no-rj",
       "statistics": {
-        "viewCount": "1320933",
-        "subscriberCount": "7380",
-        "videoCount": "50"
+        "viewCount": "1322736",
+        "subscriberCount": "7390",
+        "videoCount": "51"
       },
-      "latestTitle": "video 14",
+      "latestTitle": "10 dupes de Ulta que superan a los BEST SELLERS de Sephora por 1/3 del precio",
       "recent": {
         "views": 0,
-        "likes": 46,
+        "likes": 34,
         "sample": 6
       },
       "videos": [
+        {
+          "id": "WLOFJC7gkbI",
+          "title": "10 dupes de Ulta que superan a los BEST SELLERS de Sephora por 1/3 del precio",
+          "viewCount": "0",
+          "likeCount": "1"
+        },
         {
           "id": "GaEMqXyk6t0",
           "title": "video 14",
@@ -282,12 +288,6 @@
           "title": "V10",
           "viewCount": "0",
           "likeCount": "7"
-        },
-        {
-          "id": "xrjeHUmj4ek",
-          "title": "Probamos 7 cremas hidratantes con color para piel madura: la de $5 superó a la de $50",
-          "viewCount": "0",
-          "likeCount": "13"
         }
       ],
       "source": "youtube-public-snapshot"
